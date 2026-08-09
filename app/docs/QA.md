@@ -6,7 +6,7 @@
 |-------|---------|--------------------------------|
 | Go unit tests | `go test ./...` | **PASS** (audio, brain, projects) |
 | Frontend typecheck/build | `cd frontend && npm run build` | **PASS** (Vite production bundle) |
-| Wails production build | `wails build -clean` | **PASS** → `build/bin/Slate.exe` (~12.7 MB) |
+| Wails production build | `.\scripts\build.ps1` | **PASS** → root `Slate.exe` (~12.7 MB) |
 | Control descriptor | Launch app | **PASS** `%APPDATA%\slate\control.json` written |
 | MCP tools catalog | GET `/tools` | **PASS** — 13 tools |
 | MCP create/list/get/add_scene/set_brain | live invoke | **PASS** |
@@ -17,7 +17,7 @@
 
 ## Manual checklist (parity)
 
-Run `build\bin\Slate.exe` and verify:
+Run `.\Slate.exe` and verify:
 
 - [x] App launches (WebView2 window titled Slate)
 - [ ] Home: list/create/open/delete project (partially via MCP)

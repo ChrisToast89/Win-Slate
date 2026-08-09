@@ -27,7 +27,7 @@
 ## Deliverable
 
 ```
-slate-windows/build/bin/Slate.exe
+slate-windows/Slate.exe (folder root)
 ```
 
 ## 2026-08-07 — Brain menu (Claude Code)

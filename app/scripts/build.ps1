@@ -19,6 +19,7 @@ if (-not (Test-Path $src)) {
     throw "Expected binary not found: $src"
 }
 
-Copy-Item -Force $src $dst
+# Keep a single launchable binary at the folder root (no build\bin duplicate).
+Move-Item -Force $src $dst
 Write-Host "OK: $dst" -ForegroundColor Green
 Write-Host "Launch from folder root:  .\Slate.exe" -ForegroundColor Green

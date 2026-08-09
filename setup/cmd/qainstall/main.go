@@ -14,7 +14,8 @@ import (
 
 func main() {
 	if len(os.Args) < 3 {
-		fmt.Println("usage: qainstall <installDir> <payloadSlate.exe>")
+		fmt.Println("usage: qainstall <installDir> <Slate.exe>")
+		fmt.Println("  payload path is normally setup/payload/Slate.exe (synced from app root or ../slate-windows/Slate.exe)")
 		os.Exit(2)
 	}
 	dest := os.Args[1]

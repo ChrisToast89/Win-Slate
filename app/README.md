@@ -7,6 +7,6 @@ Host: Go + Wails. UI and product design remain Sam’s.
 See the repository root [README](../README.md) and [NOTICE](../NOTICE).
 
 ```powershell
-wails build
-Copy-Item -Force build\bin\Slate.exe .\Slate.exe
+.\scripts\build.ps1
+# or: wails build; Move-Item -Force build\bin\Slate.exe .\Slate.exe
 ```
