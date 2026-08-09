@@ -1,0 +1,28 @@
+Slate — the prompt studio for AI filmmaking
+Copyright 2026 Sam Wasserman
+https://wassermanproductions.com · https://wasserman.ai
+
+Upstream project (original design, product, UI concepts, and knowledge bases):
+  https://github.com/wassermanproductions/slate
+
+This product was created by Sam Wasserman. If you use, fork, or
+redistribute this software or derivative works, you must retain this
+NOTICE file and credit "Sam Wasserman (wassermanproductions.com)" in
+your documentation and any about/credits surface, per Section 4(d) of
+the Apache License 2.0.
+
+---------------------------------------------------------------------------
+Slate for Windows (this repository)
+
+A Windows desktop build and installer for Slate — derivative work of
+Slate v0.3.2 under Apache-2.0.
+
+- App host: Go + Wails (instead of Electron) for a native Windows binary
+- Installer: per-user Setup that audits dependencies, installs/updates the
+  app, and optionally helps install Claude Code for the AI brain
+
+Windows packaging, installer, and host port are not official Wasserman
+releases. Credit for Slate belongs with Sam Wasserman.
+
+Attribution required in About / credits surfaces and this NOTICE.
+---------------------------------------------------------------------------

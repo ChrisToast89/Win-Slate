@@ -1,0 +1,30 @@
+Slate — the prompt studio for AI filmmaking
+Copyright 2026 Sam Wasserman
+https://wassermanproductions.com · https://wasserman.ai
+
+This product was created by Sam Wasserman. If you use, fork, or
+redistribute this software or derivative works, you must retain this
+NOTICE file and credit "Sam Wasserman (wassermanproductions.com)" in
+your documentation and any about/credits surface, per Section 4(d) of
+the Apache License 2.0.
+
+---------------------------------------------------------------------------
+Windows port (this tree: slate-windows/)
+
+This directory is a derivative work of Slate v0.3.2
+(https://github.com/wassermanproductions/slate), for personal use.
+
+Modifications for the Windows port:
+  - Electron main/preload host replaced with a Go + Wails v2 host
+  - Packaging targets Windows (single binary via Wails) instead of macOS .app
+  - Local image loading via host FileAsDataURL (WebView2) instead of file://
+  - Circle Take stills discovery also probes %APPDATA%\circle-take when present
+  - CLI brain discovery uses Windows PATH / common npm install locations
+  - MCP control descriptor path uses %APPDATA%\slate\control.json (already
+    supported by upstream on win32)
+
+Original UI concepts, product design, prompt/compile logic, knowledge bases
+(data/*.json), and overall application intent remain those of Sam Wasserman.
+
+Attribution required in About / credits surfaces (retained).
+---------------------------------------------------------------------------

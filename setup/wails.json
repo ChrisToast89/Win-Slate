@@ -1,0 +1,21 @@
+{
+  "$schema": "https://wails.io/schemas/config.v2.json",
+  "name": "SlateForWindows-Setup",
+  "outputfilename": "SlateForWindows-Setup",
+  "frontend:install": "npm install",
+  "frontend:build": "npm run build",
+  "frontend:dev:watcher": "npm run dev",
+  "frontend:dev:serverUrl": "auto",
+  "author": {
+    "name": "Windows packaging for Slate by Sam Wasserman",
+    "email": ""
+  },
+  "info": {
+    "companyName": "Based on Slate by Sam Wasserman",
+    "productName": "Slate for Windows Setup",
+    "productVersion": "0.3.2-win.1",
+    "copyright": "Copyright 2026 Sam Wasserman. Windows packaging is a derivative work under Apache-2.0.",
+    "comments": "Installer for Slate for Windows — derivative of Slate by Sam Wasserman"
+  },
+  "assetdir": "./frontend/dist"
+}

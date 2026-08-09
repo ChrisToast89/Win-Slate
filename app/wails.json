@@ -1,0 +1,22 @@
+{
+  "$schema": "https://wails.io/schemas/config.v2.json",
+  "name": "Slate",
+  "outputfilename": "Slate",
+  "frontend:install": "npm install",
+  "frontend:build": "npm run build",
+  "frontend:dev:watcher": "npm run dev",
+  "frontend:dev:serverUrl": "auto",
+  "author": {
+    "name": "Windows port (derivative of Slate by Sam Wasserman)",
+    "email": ""
+  },
+  "info": {
+    "companyName": "Based on Slate by Sam Wasserman",
+    "productName": "Slate",
+    "productVersion": "0.3.2-win.1",
+    "copyright": "Copyright 2026 Sam Wasserman. Windows port is a derivative work under Apache-2.0.",
+    "comments": "The prompt studio for AI filmmaking — Windows port of Slate 0.3.2"
+  },
+  "assetdir": "./frontend/dist",
+  "reloaddirs": "./frontend/src"
+}

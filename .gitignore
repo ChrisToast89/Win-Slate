@@ -1,0 +1,16 @@
+node_modules/
+**/node_modules/
+**/frontend/dist/
+**/frontend/node_modules/
+**/build/bin/
+**/*.exe
+!setup/payload/.gitkeep
+setup/payload/Slate.exe
+dist/
+*.log
+tmp/
+.DS_Store
+.idea/
+.vscode/
+*.syso
+app/Slate.exe
