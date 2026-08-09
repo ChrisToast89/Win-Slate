@@ -21,10 +21,12 @@ Please keep Sam’s credit in About screens, NOTICE, and documentation when redi
 
 ## Download
 
-**[Releases](https://github.com/ChrisToast89/slate-for-windows/releases)** — get **Slate for Windows Setup** (recommended) or a portable `Slate.exe`.
+**[Slate for Windows v0.3.2-win.1 (zip)](https://github.com/ChrisToast89/slate-for-windows/releases/download/v0.3.2-win.1/SlateForWindows-v0.3.2-win.1.zip)**  
 
-1. Download and unzip the Setup package.
-2. Run **`SlateForWindows-Setup.exe`**.
+All releases: [github.com/ChrisToast89/slate-for-windows/releases](https://github.com/ChrisToast89/slate-for-windows/releases)
+
+1. Download and unzip the package.
+2. Run **`SlateForWindows-Setup.exe`** (or portable `Slate.exe`).
 3. Follow **Check this PC** → choose an install folder → **Install**.
 4. Optional: install/connect **Claude Code** when Setup offers it (AI brain; no API keys stored in Slate).
 
