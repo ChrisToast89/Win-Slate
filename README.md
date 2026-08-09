@@ -2,7 +2,11 @@
 
 Windows version of **[Slate](https://github.com/wassermanproductions/slate)** — the prompt studio for AI filmmaking — created by **[Sam Wasserman](https://wassermanproductions.com)**.
 
-You do **not** need to compile anything, install Node, or open a developer tool to use this. Download the zip, unzip it, and run the Setup program.
+This is a binary executable for locally running Sam's Slate application.
+
+Some additional configuration may be required.
+
+Download the zip, unzip it, and run the Setup program.
 
 ---
 
@@ -10,7 +14,7 @@ You do **not** need to compile anything, install Node, or open a developer tool 
 
 ### Installer (recommended)
 
-**→ [SlateForWindows-Setup.exe](./SlateForWindows-Setup.exe)** — in this repository’s root folder  
+**→ [SlateForWindows-Setup.exe](./SlateForWindows-Setup.exe)**
 
 On GitHub: open that file in the file list, then **Download** (or use [this direct link](https://github.com/ChrisToast89/slate-for-windows/raw/main/SlateForWindows-Setup.exe)).
 
