@@ -7,6 +7,7 @@ node_modules/
 !setup/payload/.gitkeep
 setup/payload/Slate.exe
 dist/
+distributable/
 *.log
 tmp/
 .DS_Store

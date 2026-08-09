@@ -1,32 +1,76 @@
 # Build Slate for Windows app + Setup installer, stage dist package.
+# App binary location: folder root only (app\Slate.exe or sibling slate-windows\Slate.exe).
+# Never ships a build\bin duplicate of Slate.exe.
 # Requires: Go, Wails, Node/npm
 $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $PSScriptRoot
 Set-Location $root
 
 $version = "0.3.2-win.1"
-$dist = Join-Path $root "dist"
+# End-user package only (not the full dev tree) lives under distributable/
+$dist = Join-Path $root "distributable"
 $stage = Join-Path $dist "SlateForWindows-v$version"
-New-Item -ItemType Directory -Force -Path $dist, $stage, (Join-Path $root "setup\payload") | Out-Null
+$payloadDir = Join-Path $root "setup\payload"
+$payloadExe = Join-Path $payloadDir "Slate.exe"
+$appRootExe = Join-Path $root "app\Slate.exe"
+# Sibling checkout: Slate-win\slate-windows\Slate.exe
+$siblingExe = Join-Path (Split-Path -Parent $root) "slate-windows\Slate.exe"
 
-Write-Host "==> Building app (wails)…" -ForegroundColor Cyan
-Set-Location (Join-Path $root "app")
-wails build
-if ($LASTEXITCODE -ne 0) { throw "app wails build failed" }
-$appExe = Join-Path $root "app\build\bin\Slate.exe"
-if (-not (Test-Path $appExe)) { throw "missing $appExe" }
-Copy-Item -Force $appExe (Join-Path $root "app\Slate.exe")
-Copy-Item -Force $appExe (Join-Path $root "setup\payload\Slate.exe")
+New-Item -ItemType Directory -Force -Path $dist, $stage, $payloadDir | Out-Null
+
+function Resolve-AppBinary {
+    # Prefer already-built root binaries (no build\bin).
+    foreach ($cand in @($siblingExe, $appRootExe)) {
+        if (Test-Path $cand) {
+            Write-Host "Using app binary: $cand" -ForegroundColor Cyan
+            return (Resolve-Path $cand).Path
+        }
+    }
+    Write-Host "==> Building app (root Slate.exe only)…" -ForegroundColor Cyan
+    $appDir = Join-Path $root "app"
+    $buildPs1 = Join-Path $appDir "scripts\build.ps1"
+    if (Test-Path $buildPs1) {
+        Push-Location $appDir
+        try {
+            & $buildPs1
+            if ($LASTEXITCODE -ne 0 -and $null -ne $LASTEXITCODE) { throw "app build.ps1 failed" }
+        } finally {
+            Pop-Location
+        }
+    } else {
+        Push-Location $appDir
+        try {
+            wails build
+            if ($LASTEXITCODE -ne 0) { throw "app wails build failed" }
+            $wailsOut = Join-Path $appDir "build\bin\Slate.exe"
+            if (-not (Test-Path $wailsOut)) { throw "missing $wailsOut" }
+            Move-Item -Force $wailsOut $appRootExe
+        } finally {
+            Pop-Location
+        }
+    }
+    if (-not (Test-Path $appRootExe)) {
+        throw "App binary missing after build: $appRootExe"
+    }
+    return (Resolve-Path $appRootExe).Path
+}
+
+$appExe = Resolve-AppBinary
+# Stage for embed + portable package (single source of truth path for Setup).
+Copy-Item -Force $appExe $payloadExe
+Copy-Item -Force $appExe $appRootExe -ErrorAction SilentlyContinue
 Copy-Item -Force $appExe (Join-Path $stage "Slate.exe")
+Write-Host "Payload ready: $payloadExe" -ForegroundColor Green
 
-Write-Host "==> Building Setup (wails)…" -ForegroundColor Cyan
+Write-Host "==> Building Setup (embeds setup\payload\Slate.exe)…" -ForegroundColor Cyan
 Set-Location (Join-Path $root "setup")
 wails build
 if ($LASTEXITCODE -ne 0) { throw "setup wails build failed" }
-$setupExe = Join-Path $root "setup\build\bin\SlateForWindows-Setup.exe"
-if (-not (Test-Path $setupExe)) { throw "missing $setupExe" }
-Copy-Item -Force $setupExe (Join-Path $stage "SlateForWindows-Setup.exe")
-Copy-Item -Force $setupExe (Join-Path $root "SlateForWindows-Setup.exe")
+
+$setupWailsOut = Join-Path $root "setup\build\bin\SlateForWindows-Setup.exe"
+if (-not (Test-Path $setupWailsOut)) { throw "missing $setupWailsOut" }
+# Install package only under distributable/ (do not leave Setup on the repo root).
+Copy-Item -Force $setupWailsOut (Join-Path $stage "SlateForWindows-Setup.exe")
 
 # Package docs
 Copy-Item -Force (Join-Path $root "README.md") (Join-Path $stage "README.md")
@@ -52,5 +96,6 @@ if (Test-Path $zip) { Remove-Item -Force $zip }
 Compress-Archive -Path (Join-Path $stage "*") -DestinationPath $zip -Force
 
 Write-Host "OK: $zip" -ForegroundColor Green
-Write-Host "    Setup: $setupExe" -ForegroundColor Green
-Write-Host "    App:   $appExe" -ForegroundColor Green
+Write-Host "    App source: $appExe" -ForegroundColor Green
+Write-Host "    Payload:    $payloadExe" -ForegroundColor Green
+Write-Host "    Package:    $stage" -ForegroundColor Green
