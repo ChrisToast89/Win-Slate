@@ -130,10 +130,39 @@ By using this package you acknowledge Sam Wasserman as the author of Slate, that
 
 ---
 
+## Credit details
+
+Full derivative-work attribution: **[ATTRIBUTION.md](./ATTRIBUTION.md)** · **[NOTICE](./NOTICE)** · **[LICENSE](./LICENSE)**
+
+---
+
 ## For developers only
 
-*Skip this section unless you are intentionally building from source. Everyday users only need the Download and Install sections above.*
+*Skip this section unless you maintain this project. Everyday users only need Download and Install above.*
 
-Source for the app and Setup lives in this repository. Prebuilt install files for users are published on **[Releases](https://github.com/ChrisToast89/slate-for-windows/releases)** — that is the supported way to get the product.
+### Publish a release (automated)
 
-If you maintain this project: release packages are assembled into a local `distributable/` folder by `scripts/build-release.ps1` and uploaded to GitHub Releases. That folder is not part of what end users need to understand.
+Prebuilt users get files from **[Releases](https://github.com/ChrisToast89/slate-for-windows/releases)**. Maintainers can publish with credit notes baked in:
+
+```powershell
+# Local: build package, tag, push, create GitHub Release (Setup + zip + attribution notes)
+.\scripts\publish-release.ps1
+.\scripts\publish-release.ps1 -Version 0.3.2-win.2 -Changelog "Describe changes."
+.\scripts\publish-release.ps1 -SkipBuild   # reuse existing binaries
+.\scripts\publish-release.ps1 -DryRun      # package notes only, no tag/release
+```
+
+Or push a version tag / run the **Release** GitHub Action (`workflow_dispatch` or tag `v*`):
+
+- Builds on `windows-latest` (Go + Node + Wails)
+- Attaches `SlateForWindows-Setup.exe` + zip
+- Release body from `docs/RELEASE_NOTES_TEMPLATE.md` (Sam Wasserman credit, Apache-2.0, unofficial, no warranty)
+
+Version source of truth: root **`VERSION`** file.
+
+### Build package only
+
+```powershell
+.\scripts\build-release.ps1          # → distributable\ + root SlateForWindows-Setup.exe
+.\scripts\sync-payload.ps1           # refresh Setup embed from app binary
+```

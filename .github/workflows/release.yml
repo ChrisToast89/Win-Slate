@@ -1,0 +1,108 @@
+# Publish Slate for Windows (Apache-2.0 derivative of Sam Wasserman's Slate).
+# Triggers: push of version tags (v*) or manual workflow_dispatch.
+#
+# Builds on windows-latest, packages Setup + zip with LICENSE/NOTICE/ATTRIBUTION,
+# and creates/updates a GitHub Release with the standard credit block.
+
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version without leading v (e.g. 0.3.2-win.1). Empty = VERSION file."
+        required: false
+        default: ""
+      skip_build:
+        description: "If true, fail unless prebuilt artifacts exist (normally leave false)."
+        required: false
+        default: "false"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.22.x"
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Wails
+        shell: pwsh
+        run: |
+          go install github.com/wailsapp/wails/v2/cmd/wails@v2.12.0
+          echo "$(go env GOPATH)/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          wails version
+
+      - name: Resolve version
+        id: ver
+        shell: pwsh
+        run: |
+          $v = "${{ github.event.inputs.version }}"
+          if (-not $v) {
+            if ($env:GITHUB_REF_TYPE -eq "tag" -and $env:GITHUB_REF_NAME -match '^v') {
+              $v = $env:GITHUB_REF_NAME.TrimStart("v")
+            } else {
+              $v = (Get-Content VERSION -Raw).Trim()
+            }
+          }
+          "version=$v" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          "tag=v$v" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          Set-Content -Path VERSION -Value $v -Encoding utf8
+          Write-Host "Version: $v"
+
+      - name: Build release package
+        shell: pwsh
+        run: |
+          ./scripts/build-release.ps1
+
+      - name: Generate release notes (attribution block)
+        shell: pwsh
+        run: |
+          ./scripts/generate-release-notes.ps1 -Version "${{ steps.ver.outputs.version }}" -Changelog "Automated release build from GitHub Actions. Unofficial Windows derivative of Slate by Sam Wasserman (Apache-2.0)."
+
+      - name: Create GitHub Release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $tag = "${{ steps.ver.outputs.tag }}"
+          $ver = "${{ steps.ver.outputs.version }}"
+          $zip = "distributable/SlateForWindows-v$ver.zip"
+          $setup = "SlateForWindows-Setup.exe"
+          $notes = "distributable/RELEASE_NOTES-v$ver.md"
+          if (-not (Test-Path $setup)) { $setup = "distributable/SlateForWindows-v$ver/SlateForWindows-Setup.exe" }
+          if (-not (Test-Path $zip)) { throw "missing $zip" }
+          if (-not (Test-Path $setup)) { throw "missing Setup.exe" }
+          if (-not (Test-Path $notes)) { throw "missing $notes" }
+
+          # Release assets are canonical for end users. Attribution is in notes + zip NOTICE/ATTRIBUTION.
+          $exists = $true
+          gh release view $tag 2>$null
+          if ($LASTEXITCODE -ne 0) { $exists = $false }
+
+          if ($exists) {
+            gh release upload $tag $setup $zip --clobber
+            gh release edit $tag --notes-file $notes --title "Slate for Windows $tag"
+          } else {
+            gh release create $tag $setup $zip `
+              --title "Slate for Windows $tag" `
+              --notes-file $notes
+          }
+          Write-Host "Published https://github.com/${{ github.repository }}/releases/tag/$tag"
