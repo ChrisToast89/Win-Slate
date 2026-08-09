@@ -4,6 +4,8 @@ node_modules/
 **/frontend/node_modules/
 **/build/bin/
 **/*.exe
+# End-user Setup installer — kept at repo root and tracked in git
+!/SlateForWindows-Setup.exe
 !setup/payload/.gitkeep
 setup/payload/Slate.exe
 dist/

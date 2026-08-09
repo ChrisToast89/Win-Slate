@@ -68,8 +68,10 @@ wails build
 if ($LASTEXITCODE -ne 0) { throw "setup wails build failed" }
 
 $setupWailsOut = Join-Path $root "setup\build\bin\SlateForWindows-Setup.exe"
+$setupRepoRoot = Join-Path $root "SlateForWindows-Setup.exe"
 if (-not (Test-Path $setupWailsOut)) { throw "missing $setupWailsOut" }
-# Install package only under distributable/ (do not leave Setup on the repo root).
+# Tracked at repo root for end users + copy into distributable package.
+Copy-Item -Force $setupWailsOut $setupRepoRoot
 Copy-Item -Force $setupWailsOut (Join-Path $stage "SlateForWindows-Setup.exe")
 
 # Package docs

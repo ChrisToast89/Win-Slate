@@ -8,27 +8,32 @@ You do **not** need to compile anything, install Node, or open a developer tool 
 
 ## Download
 
-### **[Download Slate for Windows (zip)](https://github.com/ChrisToast89/slate-for-windows/releases/download/v0.3.2-win.1/SlateForWindows-v0.3.2-win.1.zip)**
+### Installer (recommended)
 
-Older versions (if any): [all releases](https://github.com/ChrisToast89/slate-for-windows/releases)
+**→ [SlateForWindows-Setup.exe](./SlateForWindows-Setup.exe)** — in this repository’s root folder  
+
+On GitHub: open that file in the file list, then **Download** (or use [this direct link](https://github.com/ChrisToast89/slate-for-windows/raw/main/SlateForWindows-Setup.exe)).
+
+### Full package (zip)
+
+Also available as a zip (Setup + portable app + license files):  
+**[SlateForWindows-v0.3.2-win.1.zip](https://github.com/ChrisToast89/slate-for-windows/releases/download/v0.3.2-win.1/SlateForWindows-v0.3.2-win.1.zip)** · [all releases](https://github.com/ChrisToast89/slate-for-windows/releases)
 
 ---
 
 ## Install (simple steps)
 
-1. Click the download link above and save the zip file.
-2. Right‑click the zip → **Extract All…** (or use any unzip tool).
-3. Open the folder you extracted.
-4. Double‑click **`SlateForWindows-Setup.exe`**.
-5. If Windows SmartScreen appears, choose **More info** → **Run anyway** (common for new apps that are not Microsoft-signed).
-6. Follow the on‑screen steps: check your PC → pick a folder (or accept the default) → **Install**.
-7. When it finishes, open **Slate for Windows** from the Start Menu, or use **Launch Slate** in Setup.
+1. Download **`SlateForWindows-Setup.exe`** (link above).
+2. Double‑click **`SlateForWindows-Setup.exe`**.
+3. If Windows SmartScreen appears, choose **More info** → **Run anyway** (common for new apps that are not Microsoft-signed).
+4. Follow the on‑screen steps: check your PC → pick a folder (or accept the default) → **Install**.
+5. When it finishes, open **Slate for Windows** from the Start Menu, or use **Launch** in Setup.
 
 **That’s it.** You do not need to build or compile the program yourself.
 
 ### Portable option
 
-In the same unzipped folder, **`Slate.exe`** runs the app without using Setup. Setup is still recommended if you want Start Menu shortcuts and an easy update path later.
+The [release zip](https://github.com/ChrisToast89/slate-for-windows/releases/download/v0.3.2-win.1/SlateForWindows-v0.3.2-win.1.zip) also includes **`Slate.exe`**, which can run without Setup. Setup is still recommended for Start Menu shortcuts and a simple install path.
 
 ### After install (optional — AI features)
 
