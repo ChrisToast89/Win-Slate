@@ -2,6 +2,8 @@
 
 Windows version of **[Slate](https://github.com/wassermanproductions/slate)** — the prompt studio for AI filmmaking — created by **[Sam Wasserman](https://wassermanproductions.com)**.
 
+<img width="320" alt="image" src="https://github.com/user-attachments/assets/1e88f42c-9285-4b79-9836-9406424b508a" />
+
 This is a binary executable for locally running Sam's Slate application.
 
 Some additional configuration may be required.
@@ -13,6 +15,8 @@ Download the zip, unzip it, and run the Setup program.
 ## Download
 
 ### Installer (recommended)
+<img width="320" alt="image" src="https://github.com/user-attachments/assets/571986e6-f136-4cef-8595-bb5c8a6e2fb0" />
+
 
 **→ [SlateForWindows-Setup.exe](./SlateForWindows-Setup.exe)**
 
@@ -130,39 +134,10 @@ By using this package you acknowledge Sam Wasserman as the author of Slate, that
 
 ---
 
-## Credit details
-
-Full derivative-work attribution: **[ATTRIBUTION.md](./ATTRIBUTION.md)** · **[NOTICE](./NOTICE)** · **[LICENSE](./LICENSE)**
-
----
-
 ## For developers only
 
-*Skip this section unless you maintain this project. Everyday users only need Download and Install above.*
+*Skip this section unless you are intentionally building from source. Everyday users only need the Download and Install sections above.*
 
-### Publish a release (automated)
+Source for the app and Setup lives in this repository. Prebuilt install files for users are published on **[Releases](https://github.com/ChrisToast89/slate-for-windows/releases)** — that is the supported way to get the product.
 
-Prebuilt users get files from **[Releases](https://github.com/ChrisToast89/slate-for-windows/releases)**. Maintainers can publish with credit notes baked in:
-
-```powershell
-# Local: build package, tag, push, create GitHub Release (Setup + zip + attribution notes)
-.\scripts\publish-release.ps1
-.\scripts\publish-release.ps1 -Version 0.3.2-win.2 -Changelog "Describe changes."
-.\scripts\publish-release.ps1 -SkipBuild   # reuse existing binaries
-.\scripts\publish-release.ps1 -DryRun      # package notes only, no tag/release
-```
-
-Or push a version tag / run the **Release** GitHub Action (`workflow_dispatch` or tag `v*`):
-
-- Builds on `windows-latest` (Go + Node + Wails)
-- Attaches `SlateForWindows-Setup.exe` + zip
-- Release body from `docs/RELEASE_NOTES_TEMPLATE.md` (Sam Wasserman credit, Apache-2.0, unofficial, no warranty)
-
-Version source of truth: root **`VERSION`** file.
-
-### Build package only
-
-```powershell
-.\scripts\build-release.ps1          # → distributable\ + root SlateForWindows-Setup.exe
-.\scripts\sync-payload.ps1           # refresh Setup embed from app binary
-```
+If you maintain this project: release packages are assembled into a local `distributable/` folder by `scripts/build-release.ps1` and uploaded to GitHub Releases. That folder is not part of what end users need to understand.
