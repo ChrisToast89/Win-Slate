@@ -2,7 +2,20 @@
 
 A **self-contained Windows executable** of [**Slate**](https://github.com/wassermanproductions/slate) — the prompt studio for AI filmmaking — based on the public work of **[Sam Wasserman](https://wassermanproductions.com)**.
 
-This is **not** Sam’s original Electron / macOS-first distribution, and it is **not** an official Wasserman Productions release. It is a **recompile / host port**: the same product idea, UI, and knowledge bases, running as a native Windows binary (Go + Wails) with an optional Setup installer. You download a package, run Setup or `Slate.exe`, and go — no Node build step required to *use* the app.
+## Download (install package)
+
+**→ [SlateForWindows-v0.3.2-win.1.zip](https://github.com/ChrisToast89/slate-for-windows/releases/download/v0.3.2-win.1/SlateForWindows-v0.3.2-win.1.zip)**  
+*(Setup installer + portable `Slate.exe` + license/NOTICE files)*
+
+All releases: [github.com/ChrisToast89/slate-for-windows/releases](https://github.com/ChrisToast89/slate-for-windows/releases)
+
+Unzip, run **`SlateForWindows-Setup.exe`** (or portable **`Slate.exe`**). No Node build required to use the app.
+
+> The install package is **not** stored in the git tree (binaries are large and gitignored). On GitHub it lives under **Releases**. If you built locally, the same files are under **`distributable/`** in this folder.
+
+---
+
+This is **not** Sam’s original Electron / macOS-first distribution, and it is **not** an official Wasserman Productions release. It is a **recompile / host port**: the same product idea, UI, and knowledge bases, running as a native Windows binary (Go + Wails) with an optional Setup installer.
 
 > **Upstream (authoritative):** [github.com/wassermanproductions/slate](https://github.com/wassermanproductions/slate)  
 > **This repo:** Windows packaging and host conversion only
@@ -65,16 +78,10 @@ By running or redistributing Slate for Windows you acknowledge:
 
 ---
 
-## Download
+## Install (end users)
 
-**[Slate for Windows v0.3.2-win.1 (zip)](https://github.com/ChrisToast89/slate-for-windows/releases/download/v0.3.2-win.1/SlateForWindows-v0.3.2-win.1.zip)**  
-
-All releases: [github.com/ChrisToast89/slate-for-windows/releases](https://github.com/ChrisToast89/slate-for-windows/releases)
-
-### Install (end users)
-
-1. Download and unzip the package (from GitHub Releases, or the local `distributable/` folder if you built it yourself).  
-2. Run **`SlateForWindows-Setup.exe`**, or the portable **`Slate.exe`**.  
+1. Get the zip from **[Download](#download-install-package)** above (or `distributable/` if you built locally).  
+2. Unzip and run **`SlateForWindows-Setup.exe`**, or the portable **`Slate.exe`**.  
 3. In Setup: **Check this PC** → choose an install folder → **Install**.  
 4. Optionally install or sign in to **Claude Code** when Setup offers it (AI “brain”). Slate does **not** store API keys; it uses your own CLI sign-in or a local model server.
 
