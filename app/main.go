@@ -71,7 +71,7 @@ func main() {
 	})
 
 	err := wails.Run(&options.App{
-		Title:     "Slate",
+		Title:     "Win-Slate",
 		Width:     1520,
 		Height:    940,
 		MinWidth:  1100,
