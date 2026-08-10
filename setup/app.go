@@ -9,13 +9,13 @@ import (
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 
-	"github.com/ChrisToast89/slate-for-windows/setup/internal/audit"
-	"github.com/ChrisToast89/slate-for-windows/setup/internal/deps"
-	"github.com/ChrisToast89/slate-for-windows/setup/internal/install"
-	"github.com/ChrisToast89/slate-for-windows/setup/internal/logx"
-	"github.com/ChrisToast89/slate-for-windows/setup/internal/manifest"
-	"github.com/ChrisToast89/slate-for-windows/setup/internal/paths"
-	"github.com/ChrisToast89/slate-for-windows/setup/internal/update"
+	"github.com/ChrisToast89/Win-Slate/setup/internal/audit"
+	"github.com/ChrisToast89/Win-Slate/setup/internal/deps"
+	"github.com/ChrisToast89/Win-Slate/setup/internal/install"
+	"github.com/ChrisToast89/Win-Slate/setup/internal/logx"
+	"github.com/ChrisToast89/Win-Slate/setup/internal/manifest"
+	"github.com/ChrisToast89/Win-Slate/setup/internal/paths"
+	"github.com/ChrisToast89/Win-Slate/setup/internal/update"
 )
 
 // App is the Setup wizard host.
@@ -34,7 +34,7 @@ func NewApp(payload []byte) *App {
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 	_ = logx.Init()
-	logx.Log("Slate for Windows Setup v%s started", paths.SetupVersion)
+	logx.Log("Win-Slate Setup v%s started", paths.SetupVersion)
 }
 
 func (a *App) emitProgress(step, detail string, percent int) {
@@ -102,7 +102,7 @@ func (a *App) PickInstallFolder(current string) string {
 		current = paths.DefaultInstallDir()
 	}
 	path, err := runtime.OpenDirectoryDialog(a.ctx, runtime.OpenDialogOptions{
-		Title:                "Choose install folder for Slate for Windows",
+		Title:                "Choose install folder for Win-Slate",
 		DefaultDirectory:     current,
 		CanCreateDirectories: true,
 	})

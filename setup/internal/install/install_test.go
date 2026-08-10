@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/ChrisToast89/slate-for-windows/setup/internal/paths"
+	"github.com/ChrisToast89/Win-Slate/setup/internal/paths"
 )
 
 func TestInstallWritesExeAndManifest(t *testing.T) {

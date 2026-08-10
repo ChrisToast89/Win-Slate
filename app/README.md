@@ -1,4 +1,4 @@
-# Slate for Windows — application
+# Win-Slate — application
 
 Windows port of [Slate](https://github.com/wassermanproductions/slate) by **Sam Wasserman** (Apache-2.0).
 

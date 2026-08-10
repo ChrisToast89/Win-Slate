@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/ChrisToast89/slate-for-windows/setup/internal/paths"
+	"github.com/ChrisToast89/Win-Slate/setup/internal/paths"
 )
 
 // Manifest records what Setup installed (for audit + update checks).
@@ -56,17 +56,19 @@ func Discover() (installDir string, m *Manifest, ok bool) {
 			return cfg.InstallDir, mm, true
 		}
 	}
-	// 2) Default
+	// 2) Default (Win-Slate)
 	def := paths.DefaultInstallDir()
 	if st, err := os.Stat(paths.InstalledExe(def)); err == nil && !st.IsDir() {
 		mm, _ := Read(def)
 		return def, mm, true
 	}
-	// 3) Older layout from electron helper (Programs\Slate)
-	legacy := filepath.Join(paths.LocalAppData(), "Programs", "Slate")
-	if st, err := os.Stat(paths.InstalledExe(legacy)); err == nil && !st.IsDir() {
-		mm, _ := Read(legacy)
-		return legacy, mm, true
+	// 3) Previous product folder name
+	for _, legacyName := range []string{"Slate for Windows", "Slate"} {
+		legacy := filepath.Join(paths.LocalAppData(), "Programs", legacyName)
+		if st, err := os.Stat(paths.InstalledExe(legacy)); err == nil && !st.IsDir() {
+			mm, _ := Read(legacy)
+			return legacy, mm, true
+		}
 	}
 	return "", nil, false
 }

@@ -1,4 +1,4 @@
-# Build Slate for Windows app + Setup installer, stage distributable package.
+# Build Win-Slate app + Setup installer, stage distributable package.
 # App binary: folder root only (app\Slate.exe or sibling slate-windows\Slate.exe).
 # Requires: Go, Wails, Node/npm
 $ErrorActionPreference = "Stop"
@@ -9,7 +9,7 @@ $versionFile = Join-Path $root "VERSION"
 $version = if (Test-Path $versionFile) { (Get-Content $versionFile -Raw).Trim() } else { "0.3.2-win.1" }
 # End-user package only (not the full dev tree)
 $dist = Join-Path $root "distributable"
-$stage = Join-Path $dist "SlateForWindows-v$version"
+$stage = Join-Path $dist "Win-Slate-v$version"
 $payloadDir = Join-Path $root "setup\payload"
 $payloadExe = Join-Path $payloadDir "Slate.exe"
 $appRootExe = Join-Path $root "app\Slate.exe"
@@ -59,11 +59,11 @@ Set-Location (Join-Path $root "setup")
 wails build
 if ($LASTEXITCODE -ne 0) { throw "setup wails build failed" }
 
-$setupWailsOut = Join-Path $root "setup\build\bin\SlateForWindows-Setup.exe"
-$setupRepoRoot = Join-Path $root "SlateForWindows-Setup.exe"
+$setupWailsOut = Join-Path $root "setup\build\bin\Win-Slate-Setup.exe"
+$setupRepoRoot = Join-Path $root "Win-Slate-Setup.exe"
 if (-not (Test-Path $setupWailsOut)) { throw "missing $setupWailsOut" }
 Copy-Item -Force $setupWailsOut $setupRepoRoot
-Copy-Item -Force $setupWailsOut (Join-Path $stage "SlateForWindows-Setup.exe")
+Copy-Item -Force $setupWailsOut (Join-Path $stage "Win-Slate-Setup.exe")
 
 # Package docs + attribution (Apache-2.0 derivative compliance)
 Copy-Item -Force (Join-Path $root "README.md") (Join-Path $stage "README.md")
@@ -73,24 +73,24 @@ if (Test-Path (Join-Path $root "ATTRIBUTION.md")) {
     Copy-Item -Force (Join-Path $root "ATTRIBUTION.md") (Join-Path $stage "ATTRIBUTION.md")
 }
 @"
-Slate for Windows v$version
+Win-Slate v$version
 ===========================
 
 Unofficial Windows build — derivative of Slate by Sam Wasserman (Apache-2.0).
 Not an official Wasserman release. No warranty. See LICENSE.txt, NOTICE.txt, ATTRIBUTION.md.
 
-1. Run SlateForWindows-Setup.exe
+1. Run Win-Slate-Setup.exe
 2. Check this PC → choose install folder → Install
 3. Optional: Install / sign in to Claude Code for the AI brain
 
 Portable option: run Slate.exe directly (WebView2 required).
 
 Upstream: https://github.com/wassermanproductions/slate
-This package: https://github.com/ChrisToast89/slate-for-windows
+This package: https://github.com/ChrisToast89/Win-Slate
 Projects: %USERPROFILE%\Documents\Slate (never deleted by Setup)
 "@ | Set-Content -Encoding utf8 (Join-Path $stage "INSTALL.txt")
 
-$zip = Join-Path $dist "SlateForWindows-v$version.zip"
+$zip = Join-Path $dist "Win-Slate-v$version.zip"
 if (Test-Path $zip) { Remove-Item -Force $zip }
 Compress-Archive -Path (Join-Path $stage "*") -DestinationPath $zip -Force
 

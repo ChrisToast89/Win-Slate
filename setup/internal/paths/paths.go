@@ -8,12 +8,12 @@ import (
 
 // Product identity — Windows packaging of Sam Wasserman's Slate.
 const (
-	ProductName       = "Slate for Windows"
+	ProductName       = "Win-Slate"
 	AppExeName        = "Slate.exe"
 	SetupVersion      = "0.3.2-win.1"
 	AppVersion        = "0.3.2-win.1"
 	GitHubOwner       = "ChrisToast89"
-	GitHubRepo        = "slate-for-windows"
+	GitHubRepo        = "Win-Slate"
 	UpstreamSlateURL  = "https://github.com/wassermanproductions/slate"
 	UpstreamAuthor    = "Sam Wasserman"
 	GitHubReleasesAPI = "https://api.github.com/repos/" + GitHubOwner + "/" + GitHubRepo + "/releases/latest"
@@ -22,7 +22,7 @@ const (
 
 // ConfigDir stores last chosen install path (per-user).
 func ConfigDir() string {
-	return filepath.Join(LocalAppData(), "Slate for Windows")
+	return filepath.Join(LocalAppData(), "Win-Slate")
 }
 
 func ConfigPath() string {
@@ -39,7 +39,7 @@ func LocalAppData() string {
 
 // DefaultInstallDir is the suggested per-user install location.
 func DefaultInstallDir() string {
-	return filepath.Join(LocalAppData(), "Programs", "Slate for Windows")
+	return filepath.Join(LocalAppData(), "Programs", "Win-Slate")
 }
 
 func ManifestName() string { return "install-manifest.json" }
@@ -62,17 +62,17 @@ func ProjectsDir() string {
 }
 
 func TempLog() string {
-	return filepath.Join(os.TempDir(), "slate-for-windows-setup.log")
+	return filepath.Join(os.TempDir(), "win-slate-setup.log")
 }
 
 func StartMenuShortcut() string {
 	programs := filepath.Join(os.Getenv("APPDATA"), "Microsoft", "Windows", "Start Menu", "Programs")
-	return filepath.Join(programs, "Slate for Windows.lnk")
+	return filepath.Join(programs, "Win-Slate.lnk")
 }
 
 func DesktopShortcut() string {
 	home, _ := os.UserHomeDir()
-	return filepath.Join(home, "Desktop", "Slate for Windows.lnk")
+	return filepath.Join(home, "Desktop", "Win-Slate.lnk")
 }
 
 func IsProtectedPath(p string) bool {

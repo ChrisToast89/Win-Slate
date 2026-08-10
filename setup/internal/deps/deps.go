@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ChrisToast89/slate-for-windows/setup/internal/audit"
-	"github.com/ChrisToast89/slate-for-windows/setup/internal/logx"
+	"github.com/ChrisToast89/Win-Slate/setup/internal/audit"
+	"github.com/ChrisToast89/Win-Slate/setup/internal/logx"
 )
 
 type ProgressFn func(step, detail string, percent int)

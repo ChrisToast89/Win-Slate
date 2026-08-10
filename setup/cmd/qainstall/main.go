@@ -5,11 +5,11 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/ChrisToast89/slate-for-windows/setup/internal/audit"
-	"github.com/ChrisToast89/slate-for-windows/setup/internal/install"
-	"github.com/ChrisToast89/slate-for-windows/setup/internal/manifest"
-	"github.com/ChrisToast89/slate-for-windows/setup/internal/paths"
-	"github.com/ChrisToast89/slate-for-windows/setup/internal/update"
+	"github.com/ChrisToast89/Win-Slate/setup/internal/audit"
+	"github.com/ChrisToast89/Win-Slate/setup/internal/install"
+	"github.com/ChrisToast89/Win-Slate/setup/internal/manifest"
+	"github.com/ChrisToast89/Win-Slate/setup/internal/paths"
+	"github.com/ChrisToast89/Win-Slate/setup/internal/update"
 )
 
 func main() {

@@ -8,9 +8,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ChrisToast89/slate-for-windows/setup/internal/logx"
-	"github.com/ChrisToast89/slate-for-windows/setup/internal/manifest"
-	"github.com/ChrisToast89/slate-for-windows/setup/internal/paths"
+	"github.com/ChrisToast89/Win-Slate/setup/internal/logx"
+	"github.com/ChrisToast89/Win-Slate/setup/internal/manifest"
+	"github.com/ChrisToast89/Win-Slate/setup/internal/paths"
 )
 
 type CheckResult struct {
@@ -93,7 +93,7 @@ func fetchLatest() (ghRelease, error) {
 		return rel, err
 	}
 	req.Header.Set("Accept", "application/vnd.github+json")
-	req.Header.Set("User-Agent", "SlateForWindows-Setup/"+paths.SetupVersion)
+	req.Header.Set("User-Agent", "Win-Slate-Setup/"+paths.SetupVersion)
 	resp, err := client.Do(req)
 	if err != nil {
 		return rel, err

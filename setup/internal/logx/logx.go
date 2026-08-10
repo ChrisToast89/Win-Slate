@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ChrisToast89/slate-for-windows/setup/internal/paths"
+	"github.com/ChrisToast89/Win-Slate/setup/internal/paths"
 )
 
 var (

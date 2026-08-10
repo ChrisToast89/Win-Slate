@@ -1,9 +1,9 @@
-# Slate for Windows {{VERSION}}
+# Win-Slate {{VERSION}}
 
 ## Download for users
 
-- **Setup (recommended):** `SlateForWindows-Setup.exe` (also at repository root on `main`)
-- **Full package:** `SlateForWindows-v{{VERSION}}.zip` (Setup + portable `Slate.exe` + licenses)
+- **Setup (recommended):** `Win-Slate-Setup.exe` (also at repository root on `main`)
+- **Full package:** `Win-Slate-v{{VERSION}}.zip` (Setup + portable `Slate.exe` + licenses)
 
 You do **not** need to compile anything. Download, run Setup, follow the prompts.
 
@@ -25,7 +25,7 @@ Generative coding tools assisted the Windows port and packaging. The original pr
 
 ## What’s in this package
 
-- `SlateForWindows-Setup.exe` — installer (audit PC, choose folder, optional tools)
+- `Win-Slate-Setup.exe` — installer (audit PC, choose folder, optional tools)
 - `Slate.exe` — portable app binary
 - `LICENSE.txt`, `NOTICE.txt`, `INSTALL.txt`, `README.md`
 

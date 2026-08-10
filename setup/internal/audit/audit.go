@@ -10,9 +10,9 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/ChrisToast89/slate-for-windows/setup/internal/logx"
-	"github.com/ChrisToast89/slate-for-windows/setup/internal/manifest"
-	"github.com/ChrisToast89/slate-for-windows/setup/internal/paths"
+	"github.com/ChrisToast89/Win-Slate/setup/internal/logx"
+	"github.com/ChrisToast89/Win-Slate/setup/internal/manifest"
+	"github.com/ChrisToast89/Win-Slate/setup/internal/paths"
 	"golang.org/x/sys/windows"
 )
 
@@ -124,7 +124,7 @@ func Run() Report {
 			r.InstalledVersion = "(unknown — no manifest)"
 		}
 		r.Checks = append(r.Checks, Check{
-			ID: "existing", Label: "Existing Slate for Windows install", OK: true, Required: false,
+			ID: "existing", Label: "Existing Win-Slate install", OK: true, Required: false,
 			Detail: r.InstallPath + " · " + r.InstalledVersion,
 			Action: "You can update in place or choose a different folder",
 		})
@@ -150,7 +150,7 @@ func Run() Report {
 		}
 	}
 	if r.CanProceed {
-		r.Summary = "This PC can install Slate for Windows."
+		r.Summary = "This PC can install Win-Slate."
 	} else {
 		r.Summary = fmt.Sprintf("%d required check(s) failed — fix those, then retry.", fail)
 	}

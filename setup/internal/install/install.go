@@ -8,9 +8,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ChrisToast89/slate-for-windows/setup/internal/logx"
-	"github.com/ChrisToast89/slate-for-windows/setup/internal/manifest"
-	"github.com/ChrisToast89/slate-for-windows/setup/internal/paths"
+	"github.com/ChrisToast89/Win-Slate/setup/internal/logx"
+	"github.com/ChrisToast89/Win-Slate/setup/internal/manifest"
+	"github.com/ChrisToast89/Win-Slate/setup/internal/paths"
 )
 
 type ProgressFn func(step, detail string, percent int)
@@ -92,7 +92,7 @@ func Run(opts Options, progress ProgressFn) (Result, error) {
 	// LICENSE / NOTICE next to app when present beside payload (optional)
 	// Write a short credit file always.
 	credit := fmt.Sprintf(
-		"Slate for Windows %s\n\nSlate by Sam Wasserman (Apache-2.0)\n%s\n\nThis Windows build is a derivative packaging.\nProjects live in: %s\n",
+		"Win-Slate %s\n\nSlate by Sam Wasserman (Apache-2.0)\n%s\n\nThis Windows build is a derivative packaging.\nProjects live in: %s\n",
 		paths.AppVersion, paths.UpstreamSlateURL, paths.ProjectsDir(),
 	)
 	_ = os.WriteFile(filepath.Join(dest, "README-CREDIT.txt"), []byte(credit), 0o644)
@@ -122,14 +122,14 @@ func Run(opts Options, progress ProgressFn) (Result, error) {
 
 	lines := []string{}
 	if opts.IsUpdate {
-		lines = append(lines, "Slate for Windows was updated.")
+		lines = append(lines, "Win-Slate was updated.")
 	} else {
-		lines = append(lines, "Slate for Windows is installed.")
+		lines = append(lines, "Win-Slate is installed.")
 	}
 	lines = append(lines, "Location: "+exePath)
 	lines = append(lines, "Version: "+res.ReleaseTag)
 	if res.StartMenuOK {
-		lines = append(lines, "Start Menu: Slate for Windows")
+		lines = append(lines, "Start Menu: Win-Slate")
 	}
 	if res.SmokeOK {
 		lines = append(lines, "Startup check: passed ("+res.SmokeDetail+")")
@@ -174,7 +174,7 @@ $ws = New-Object -ComObject WScript.Shell
 $s = $ws.CreateShortcut(%q)
 $s.TargetPath = %q
 $s.WorkingDirectory = %q
-$s.Description = "Slate for Windows — by Sam Wasserman (Windows port)"
+$s.Description = "Win-Slate — by Sam Wasserman (Windows port)"
 $s.Save()
 `, lnk, target, workDir)
 	cmd := exec.Command("powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", ps)

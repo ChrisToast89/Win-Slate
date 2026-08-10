@@ -1,4 +1,4 @@
-# Publish Slate for Windows (Apache-2.0 derivative of Sam Wasserman's Slate).
+# Publish Win-Slate (Apache-2.0 derivative of Sam Wasserman's Slate).
 # Triggers: push of version tags (v*) or manual workflow_dispatch.
 #
 # Builds on windows-latest, packages Setup + zip with LICENSE/NOTICE/ATTRIBUTION,
@@ -84,10 +84,10 @@ jobs:
         run: |
           $tag = "${{ steps.ver.outputs.tag }}"
           $ver = "${{ steps.ver.outputs.version }}"
-          $zip = "distributable/SlateForWindows-v$ver.zip"
-          $setup = "SlateForWindows-Setup.exe"
+          $zip = "distributable/Win-Slate-v$ver.zip"
+          $setup = "Win-Slate-Setup.exe"
           $notes = "distributable/RELEASE_NOTES-v$ver.md"
-          if (-not (Test-Path $setup)) { $setup = "distributable/SlateForWindows-v$ver/SlateForWindows-Setup.exe" }
+          if (-not (Test-Path $setup)) { $setup = "distributable/Win-Slate-v$ver/Win-Slate-Setup.exe" }
           if (-not (Test-Path $zip)) { throw "missing $zip" }
           if (-not (Test-Path $setup)) { throw "missing Setup.exe" }
           if (-not (Test-Path $notes)) { throw "missing $notes" }
@@ -99,10 +99,10 @@ jobs:
 
           if ($exists) {
             gh release upload $tag $setup $zip --clobber
-            gh release edit $tag --notes-file $notes --title "Slate for Windows $tag"
+            gh release edit $tag --notes-file $notes --title "Win-Slate $tag"
           } else {
             gh release create $tag $setup $zip `
-              --title "Slate for Windows $tag" `
+              --title "Win-Slate $tag" `
               --notes-file $notes
           }
           Write-Host "Published https://github.com/${{ github.repository }}/releases/tag/$tag"

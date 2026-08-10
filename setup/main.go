@@ -19,7 +19,7 @@ var payloadSlate []byte
 func main() {
 	app := NewApp(payloadSlate)
 	err := wails.Run(&options.App{
-		Title:            "Slate for Windows Setup",
+		Title:            "Win-Slate Setup",
 		Width:            760,
 		Height:           680,
 		MinWidth:         680,

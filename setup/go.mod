@@ -1,4 +1,4 @@
-module github.com/ChrisToast89/slate-for-windows/setup
+module github.com/ChrisToast89/Win-Slate/setup
 
 go 1.25.0
 

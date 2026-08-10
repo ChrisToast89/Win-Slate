@@ -12,7 +12,7 @@ your documentation and any about/credits surface, per Section 4(d) of
 the Apache License 2.0.
 
 ---------------------------------------------------------------------------
-Slate for Windows (this repository)
+Win-Slate (this repository; formerly slate-for-windows)
 
 A self-contained Windows executable build and installer for Slate —
 derivative work of Slate v0.3.2 under Apache-2.0. This is a recompile /
@@ -20,12 +20,14 @@ host port based on Sam Wasserman's work; it is not an official Wasserman
 release and is offered WITHOUT WARRANTY OF ANY KIND (see Apache-2.0
 Sections 7–8 and the project README).
 
+Repository: https://github.com/ChrisToast89/Win-Slate
+
 - App host: Go + Wails (instead of Electron) for a native Windows binary
 - Installer: per-user Setup that audits dependencies, installs/updates the
   app, and optionally helps install Claude Code for the AI brain
 
 Generative coding tools were used to assist the Windows port, installer,
-and packaging. Credit for the original Slate product belongs with
+and packaging. Credit for the original product belongs with
 Sam Wasserman.
 
 Attribution required in About / credits surfaces and this NOTICE.

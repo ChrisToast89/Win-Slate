@@ -1,4 +1,4 @@
-# Attribution — Slate for Windows
+# Attribution — Win-Slate
 
 This project is an **unofficial derivative** of **Slate**, published under the same **Apache License 2.0**.
 
@@ -17,8 +17,8 @@ Original product design, UI concepts, prompt/compile logic, coverage plans, mode
 
 | | |
 |--|--|
-| **Name** | Slate for Windows |
-| **Repository** | [github.com/ChrisToast89/slate-for-windows](https://github.com/ChrisToast89/slate-for-windows) |
+| **Name** | Win-Slate |
+| **Repository** | [github.com/ChrisToast89/Win-Slate](https://github.com/ChrisToast89/Win-Slate) |
 | **What it is** | Windows desktop host (Go + Wails) and Setup installer so Slate can run as a local Windows binary |
 | **What it is not** | An official Wasserman release, endorsement, or replacement for upstream development |
 

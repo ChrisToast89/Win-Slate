@@ -33,7 +33,7 @@ $versionBare = $tag.TrimStart("v")
 # Keep VERSION file in sync with what we publish
 [System.IO.File]::WriteAllText((Join-Path $root "VERSION"), ($versionBare + "`n"))
 
-Write-Host "=== Publish Slate for Windows $tag (derivative of Sam Wasserman's Slate) ===" -ForegroundColor Cyan
+Write-Host "=== Publish Win-Slate $tag (derivative of Sam Wasserman's Slate) ===" -ForegroundColor Cyan
 
 # --- Build / package ---
 if (-not $SkipBuild) {
@@ -47,10 +47,10 @@ if (-not $SkipBuild) {
 }
 
 $dist = Join-Path $root "distributable"
-$stage = Join-Path $dist "SlateForWindows-v$versionBare"
-$zip = Join-Path $dist "SlateForWindows-v$versionBare.zip"
-$setupRoot = Join-Path $root "SlateForWindows-Setup.exe"
-$setupStage = Join-Path $stage "SlateForWindows-Setup.exe"
+$stage = Join-Path $dist "Win-Slate-v$versionBare"
+$zip = Join-Path $dist "Win-Slate-v$versionBare.zip"
+$setupRoot = Join-Path $root "Win-Slate-Setup.exe"
+$setupStage = Join-Path $stage "Win-Slate-Setup.exe"
 
 if (-not (Test-Path $setupRoot) -and (Test-Path $setupStage)) {
     Copy-Item -Force $setupStage $setupRoot
@@ -97,11 +97,11 @@ if ($DryRun) {
 
 # --- Git: optional commit of root Setup.exe ---
 if (-not $SkipRootCommit) {
-    git add VERSION SlateForWindows-Setup.exe ATTRIBUTION.md docs/RELEASE_NOTES_TEMPLATE.md 2>$null
+    git add VERSION Win-Slate-Setup.exe ATTRIBUTION.md docs/RELEASE_NOTES_TEMPLATE.md 2>$null
     git add scripts/*.ps1 .github 2>$null
     $status = git status --porcelain
     if ($status) {
-        git add -A -- VERSION SlateForWindows-Setup.exe
+        git add -A -- VERSION Win-Slate-Setup.exe
         # Only stage publish tooling if present
         foreach ($p in @(
                 "ATTRIBUTION.md", "VERSION", "NOTICE", "README.md",
@@ -111,7 +111,7 @@ if (-not $SkipRootCommit) {
             )) {
             if (Test-Path (Join-Path $root $p)) { git add $p }
         }
-        git commit -m "Release $tag — Slate for Windows (Apache-2.0 derivative of Sam Wasserman's Slate)" 2>&1
+        git commit -m "Release $tag — Win-Slate (Apache-2.0 derivative of Sam Wasserman's Slate)" 2>&1
         if ($LASTEXITCODE -eq 0) {
             git push origin HEAD 2>&1
         }
@@ -123,23 +123,23 @@ $existing = git tag -l $tag
 if ($existing) {
     Write-Host "Tag $tag already exists locally." -ForegroundColor Yellow
 } else {
-    git tag -a $tag -m "Slate for Windows $tag — unofficial Windows derivative of Slate by Sam Wasserman (Apache-2.0)"
+    git tag -a $tag -m "Win-Slate $tag — unofficial Windows derivative of Slate by Sam Wasserman (Apache-2.0)"
 }
 git push origin $tag 2>&1
 
 # --- GitHub Release ---
-$relExists = gh release view $tag --repo ChrisToast89/slate-for-windows 2>$null
+$relExists = gh release view $tag --repo ChrisToast89/Win-Slate 2>$null
 if ($LASTEXITCODE -eq 0) {
     Write-Host "Release $tag exists — uploading/clobbering assets…" -ForegroundColor Yellow
-    gh release upload $tag $setupRoot $zip --clobber --repo ChrisToast89/slate-for-windows
-    gh release edit $tag --notes-file $notesFile --repo ChrisToast89/slate-for-windows
+    gh release upload $tag $setupRoot $zip --clobber --repo ChrisToast89/Win-Slate
+    gh release edit $tag --notes-file $notesFile --repo ChrisToast89/Win-Slate
 } else {
     gh release create $tag $setupRoot $zip `
-        --title "Slate for Windows $tag" `
+        --title "Win-Slate $tag" `
         --notes-file $notesFile `
-        --repo ChrisToast89/slate-for-windows
+        --repo ChrisToast89/Win-Slate
 }
 
 Write-Host ""
-Write-Host "Published: https://github.com/ChrisToast89/slate-for-windows/releases/tag/$tag" -ForegroundColor Green
+Write-Host "Published: https://github.com/ChrisToast89/Win-Slate/releases/tag/$tag" -ForegroundColor Green
 Write-Host "Credit block included in release notes (Sam Wasserman / Apache-2.0 / unofficial)." -ForegroundColor Green

@@ -1,4 +1,4 @@
-# Slate for Windows
+# Win-Slate
 
 Windows version of **[Slate](https://github.com/wassermanproductions/slate)** — the prompt studio for AI filmmaking — created by **[Sam Wasserman](https://wassermanproductions.com)**.
 
@@ -18,30 +18,30 @@ Download the zip, unzip it, and run the Setup program.
 <img width="320" alt="image" src="https://github.com/user-attachments/assets/571986e6-f136-4cef-8595-bb5c8a6e2fb0" />
 
 
-**→ [SlateForWindows-Setup.exe](./SlateForWindows-Setup.exe)**
+**→ [Win-Slate-Setup.exe](./Win-Slate-Setup.exe)**
 
-On GitHub: open that file in the file list, then **Download** (or use [this direct link](https://github.com/ChrisToast89/slate-for-windows/raw/main/SlateForWindows-Setup.exe)).
+On GitHub: open that file in the file list, then **Download** (or use [this direct link](https://github.com/ChrisToast89/Win-Slate/raw/main/Win-Slate-Setup.exe)).
 
 ### Full package (zip)
 
 Also available as a zip (Setup + portable app + license files):  
-**[SlateForWindows-v0.3.2-win.1.zip](https://github.com/ChrisToast89/slate-for-windows/releases/download/v0.3.2-win.1/SlateForWindows-v0.3.2-win.1.zip)** · [all releases](https://github.com/ChrisToast89/slate-for-windows/releases)
+**[Win-Slate-v0.3.2-win.1.zip](https://github.com/ChrisToast89/Win-Slate/releases/download/v0.3.2-win.1/Win-Slate-v0.3.2-win.1.zip)** · [all releases](https://github.com/ChrisToast89/Win-Slate/releases)
 
 ---
 
 ## Install (simple steps)
 
-1. Download **`SlateForWindows-Setup.exe`** (link above).
-2. Double‑click **`SlateForWindows-Setup.exe`**.
+1. Download **`Win-Slate-Setup.exe`** (link above).
+2. Double‑click **`Win-Slate-Setup.exe`**.
 3. If Windows SmartScreen appears, choose **More info** → **Run anyway** (common for new apps that are not Microsoft-signed).
 4. Follow the on‑screen steps: check your PC → pick a folder (or accept the default) → **Install**.
-5. When it finishes, open **Slate for Windows** from the Start Menu, or use **Launch** in Setup.
+5. When it finishes, open **Win-Slate** from the Start Menu, or use **Launch** in Setup.
 
 **That’s it.** You do not need to build or compile the program yourself.
 
 ### Portable option
 
-The [release zip](https://github.com/ChrisToast89/slate-for-windows/releases/download/v0.3.2-win.1/SlateForWindows-v0.3.2-win.1.zip) also includes **`Slate.exe`**, which can run without Setup. Setup is still recommended for Start Menu shortcuts and a simple install path.
+The [release zip](https://github.com/ChrisToast89/Win-Slate/releases/download/v0.3.2-win.1/Win-Slate-v0.3.2-win.1.zip) also includes **`Slate.exe`**, which can run without Setup. Setup is still recommended for Start Menu shortcuts and a simple install path.
 
 ### After install (optional — AI features)
 
@@ -59,7 +59,7 @@ You can use much of Slate without a brain; agent-style tools need one of the sup
 
 | | |
 |--|--|
-| **The app** (default) | `%LOCALAPPDATA%\Programs\Slate for Windows` |
+| **The app** (default) | `%LOCALAPPDATA%\Programs\Win-Slate` |
 | **Your projects** | `%USERPROFILE%\Documents\Slate` |
 
 Setup **never deletes or overwrites** your project files under Documents\Slate.
@@ -138,6 +138,6 @@ By using this package you acknowledge Sam Wasserman as the author of Slate, that
 
 *Skip this section unless you are intentionally building from source. Everyday users only need the Download and Install sections above.*
 
-Source for the app and Setup lives in this repository. Prebuilt install files for users are published on **[Releases](https://github.com/ChrisToast89/slate-for-windows/releases)** — that is the supported way to get the product.
+Source for the app and Setup lives in this repository. Prebuilt install files for users are published on **[Releases](https://github.com/ChrisToast89/Win-Slate/releases)** — that is the supported way to get the product.
 
 If you maintain this project: release packages are assembled into a local `distributable/` folder by `scripts/build-release.ps1` and uploaded to GitHub Releases. That folder is not part of what end users need to understand.
