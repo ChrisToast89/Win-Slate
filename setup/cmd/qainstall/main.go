@@ -25,7 +25,7 @@ func main() {
 	}
 
 	fmt.Println("=== AUDIT ===")
-	r := audit.Run()
+	r := audit.Run(nil)
 	fmt.Printf("canProceed=%v summary=%s\n", r.CanProceed, r.Summary)
 	for _, c := range r.Checks {
 		mark := "FAIL"

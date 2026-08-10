@@ -1,6 +1,8 @@
 package audit
 
 import (
+	"bytes"
+	"context"
 	"fmt"
 	"os"
 	"os/exec"
@@ -9,12 +11,16 @@ import (
 	"strconv"
 	"strings"
 	"syscall"
+	"time"
 
 	"github.com/ChrisToast89/Win-Slate/setup/internal/logx"
 	"github.com/ChrisToast89/Win-Slate/setup/internal/manifest"
 	"github.com/ChrisToast89/Win-Slate/setup/internal/paths"
 	"golang.org/x/sys/windows"
 )
+
+// ProgressFn reports live activity during Check PC (never blocks the audit itself).
+type ProgressFn func(step, detail string, percent int)
 
 type Check struct {
 	ID       string `json:"id"`
@@ -40,18 +46,23 @@ type Report struct {
 	AlreadyInstalled bool   `json:"alreadyInstalled"`
 	InstallPath      string `json:"installPath"`
 	InstalledVersion string `json:"installedVersion"`
-	// Separate product: Sam's npm/Electron Slate (Programs\Slate). Informational only.
-	NpmSlatePresent bool   `json:"npmSlatePresent"`
-	NpmSlatePath    string `json:"npmSlatePath"`
-	ProjectsDir     string `json:"projectsDir"`
+	NpmSlatePresent  bool   `json:"npmSlatePresent"`
+	NpmSlatePath     string `json:"npmSlatePath"`
+	ProjectsDir      string `json:"projectsDir"`
 }
 
-func Run() Report {
+// Run performs a finite system audit. Every external process has a hard timeout.
+// There are no loops over unbounded user data — only fixed candidate lists.
+func Run(progress ProgressFn) Report {
+	if progress == nil {
+		progress = func(string, string, int) {}
+	}
 	logx.Log("Starting system audit")
 	var r Report
 	r.ProjectsDir = paths.ProjectsDir()
 	r.Checks = []Check{}
 
+	progress("Windows", "Reading Windows version…", 5)
 	ver, winOK := windowsVersion()
 	r.WindowsOK = winOK
 	r.Checks = append(r.Checks, Check{
@@ -60,6 +71,7 @@ func Run() Report {
 		Action: ternary(winOK, "Ready", "Windows 10 or 11 (64-bit) is required"),
 	})
 
+	progress("Disk", "Checking free disk space…", 12)
 	freeGB, diskOK := freeSpaceGB()
 	r.DiskOK = diskOK
 	r.Checks = append(r.Checks, Check{
@@ -68,6 +80,7 @@ func Run() Report {
 		Action: ternary(diskOK, "Ready", "Free up disk space, then try again"),
 	})
 
+	progress("WebView2", "Looking for WebView2 / Edge…", 22)
 	wvOK, wvDetail := webView2OK()
 	r.WebView2OK = wvOK
 	r.Checks = append(r.Checks, Check{
@@ -76,6 +89,7 @@ func Run() Report {
 		Action: ternary(wvOK, "Ready", "Install Microsoft Edge WebView2 Runtime, then retry"),
 	})
 
+	progress("winget", "Checking Windows Package Manager…", 32)
 	r.WingetOK = which("winget") != ""
 	r.Checks = append(r.Checks, Check{
 		ID: "winget", Label: "Windows Package Manager (winget)", OK: r.WingetOK, Required: false,
@@ -83,6 +97,7 @@ func Run() Report {
 		Action: ternary(r.WingetOK, "Can auto-install ffmpeg when missing", "Install tools manually if needed"),
 	})
 
+	progress("ffmpeg", "Looking for ffmpeg on PATH…", 42)
 	ff := which("ffmpeg")
 	r.FFmpegOK = ff != ""
 	r.Checks = append(r.Checks, Check{
@@ -91,14 +106,16 @@ func Run() Report {
 		Action: ternary(r.FFmpegOK, "Ready", "Setup can install via winget, or install later"),
 	})
 
+	progress("Node.js", "Checking Node.js (optional, for Claude Code)…", 55)
 	nodeV, nodeOK := nodeVersion()
 	r.NodeOK = nodeOK
 	r.Checks = append(r.Checks, Check{
 		ID: "node", Label: "Node.js (for Claude Code install only)", OK: nodeOK, Required: false,
-		Detail: ternary(nodeOK, "Found: "+nodeV, "Not required to run Slate; needed only to npm-install Claude Code"),
+		Detail: ternary(nodeOK, "Found: "+nodeV, "Not required to run Win-Slate; needed only to npm-install Claude Code"),
 		Action: ternary(nodeOK, "Can install Claude Code via npm", "Install Node LTS if you want one-click Claude Code setup"),
 	})
 
+	progress("Claude Code", "Looking for Claude Code CLI…", 68)
 	claude := resolveClaude()
 	r.ClaudeOK = claude != ""
 	r.Checks = append(r.Checks, Check{
@@ -107,6 +124,7 @@ func Run() Report {
 		Action: ternary(r.ClaudeOK, "Ready — sign in with: claude auth login", "Setup can try npm install -g @anthropic-ai/claude-code"),
 	})
 
+	progress("Codex", "Looking for Codex CLI…", 78)
 	codex := which("codex")
 	r.CodexOK = codex != ""
 	r.Checks = append(r.Checks, Check{
@@ -115,7 +133,7 @@ func Run() Report {
 		Action: "Optional alternative to Claude Code",
 	})
 
-	// Win-Slate only (manifest kind win-slate-wails) — never Programs\Slate npm install.
+	progress("Win-Slate", "Checking for an existing Win-Slate install…", 88)
 	if dir, m, ok := manifest.Discover(); ok {
 		r.AlreadyInstalled = true
 		r.InstallPath = dir
@@ -140,7 +158,7 @@ func Run() Report {
 		})
 	}
 
-	// Coexisting product: Sam's npm/Electron Slate (separate implementation).
+	progress("npm Slate", "Checking for Sam's npm/Electron Slate (separate product)…", 94)
 	npm := manifest.DetectNpmSlate()
 	r.NpmSlatePresent = npm.Present
 	r.NpmSlatePath = npm.Path
@@ -168,8 +186,9 @@ func Run() Report {
 	if r.CanProceed {
 		r.Summary = "This PC can install Win-Slate."
 	} else {
-		r.Summary = fmt.Sprintf("%d required check(s) failed — fix those, then retry.", fail)
+		r.Summary = fmt.Sprintf("%d required check(s) failed — fix those, then try again.", fail)
 	}
+	progress("Done", r.Summary, 100)
 	logx.Log("Audit done: canProceed=%v", r.CanProceed)
 	return r
 }
@@ -200,42 +219,67 @@ func which(name string) string {
 	return p
 }
 
+// runTimed runs a short CLI probe with a hard deadline (avoids hung node/winget aliases).
+func runTimed(timeout time.Duration, name string, args ...string) (string, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
+	defer cancel()
+	cmd := exec.CommandContext(ctx, name, args...)
+	hideConsole(cmd)
+	var out bytes.Buffer
+	cmd.Stdout = &out
+	cmd.Stderr = &out
+	err := cmd.Run()
+	if ctx.Err() == context.DeadlineExceeded {
+		return "", fmt.Errorf("timed out after %s", timeout)
+	}
+	return strings.TrimSpace(out.String()), err
+}
+
 func nodeVersion() (string, bool) {
 	p := which("node")
 	if p == "" {
 		return "", false
 	}
-	out, err := exec.Command(p, "-v").CombinedOutput()
+	// Windows App Execution Alias stubs under WindowsApps can hang forever if executed.
+	if strings.Contains(strings.ToLower(p), `\windowsapps\`) {
+		logx.Log("node on PATH is WindowsApps alias (%s) — skipping live -v probe", p)
+		return "(WindowsApps alias — not verified)", false
+	}
+	out, err := runTimed(3*time.Second, p, "-v")
 	if err != nil {
+		logx.Log("node -v failed: %v out=%s", err, out)
 		return "", false
 	}
-	v := strings.TrimSpace(string(out))
-	// Need 18+
+	v := strings.TrimSpace(out)
 	v = strings.TrimPrefix(v, "v")
+	// First line only
+	if i := strings.IndexAny(v, "\r\n"); i >= 0 {
+		v = v[:i]
+	}
 	parts := strings.Split(v, ".")
 	if len(parts) == 0 {
-		return v, true
+		return "v" + v, true
 	}
 	maj, _ := strconv.Atoi(parts[0])
 	return "v" + v, maj >= 18
 }
 
 func webView2OK() (bool, string) {
-	// Evergreen runtime registry keys
 	keys := []string{
 		`SOFTWARE\WOW6432Node\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}`,
 		`SOFTWARE\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}`,
 	}
 	for _, k := range keys {
-		k, err := registryOpen(k)
+		opened, err := registryOpen(k)
 		if err == nil {
-			return true, "WebView2 runtime detected (" + k + ")"
+			return true, "WebView2 runtime detected (" + opened + ")"
 		}
 	}
-	// Edge often ships with WebView2; presence of msedge is a soft OK for modern Win11
-	if which("msedge") != "" || fileExists(`C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe`) {
+	if fileExists(`C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe`) ||
+		fileExists(`C:\Program Files\Microsoft\Edge\Application\msedge.exe`) {
 		return true, "Microsoft Edge present (WebView2 typically available)"
 	}
+	// LookPath("msedge") can be slow/noisy — only use fixed paths above
 	return false, "WebView2 not detected — install from Microsoft if the app fails to open"
 }
 
@@ -268,7 +312,7 @@ func freeSpaceGB() (float64, bool) {
 	p, _ := windows.UTF16PtrFromString(path)
 	err := windows.GetDiskFreeSpaceEx(p, &freeBytes, &total, &totalFree)
 	if err != nil {
-		return 0, true // don't block if unknown
+		return 0, true
 	}
 	gb := float64(freeBytes) / (1024 * 1024 * 1024)
 	return gb, gb >= 0.4
@@ -286,8 +330,6 @@ func ternary(cond bool, a, b string) string {
 	return b
 }
 
-// Hide console for helper spawns used by audit (none currently interactive).
 func init() {
-	// ensure LookPath works for .cmd via PATHEXT
 	_ = syscall.Getpid()
 }

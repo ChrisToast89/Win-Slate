@@ -29,6 +29,7 @@ const state = {
   installDir: '',
   desktop: true,
   busy: false,
+  busyKind: '', // 'audit' | 'install' | ''
   progress: { step: '', detail: '', percent: 0 },
   result: null,
   claudeMsg: '',
@@ -53,11 +54,43 @@ async function bootstrap() {
   } catch (e) {
     console.warn(e)
   }
-  eventsOn('install:progress', (p) => {
-    state.progress = p || state.progress
+  const onProgress = (p) => {
+    if (!p || typeof p !== 'object') return
+    state.progress = {
+      step: p.step || state.progress.step || '',
+      detail: p.detail || state.progress.detail || '',
+      percent: typeof p.percent === 'number' ? p.percent : state.progress.percent || 0
+    }
+    // Throttle full re-renders slightly by always rendering (audit is short)
     render()
-  })
+  }
+  eventsOn('install:progress', onProgress)
+  eventsOn('audit:progress', onProgress)
   render()
+}
+
+function busyPanel(title) {
+  const pct = Math.max(0, Math.min(100, state.progress.percent || 0))
+  const step = state.progress.step || 'Working'
+  const detail = state.progress.detail || 'Please wait…'
+  const wrap = el('div', { className: 'busy-panel' })
+  wrap.appendChild(el('div', { className: 'busy-title', text: title || 'Checking this PC…' }))
+  const row = el('div', { className: 'busy-row' })
+  row.appendChild(el('div', { className: 'spinner' }))
+  row.appendChild(
+    el('div', { className: 'busy-text' }, [
+      el('div', { className: 'busy-step', text: step }),
+      el('div', { className: 'busy-detail', text: detail })
+    ])
+  )
+  wrap.appendChild(row)
+  const bar = el('div', { className: 'progress' })
+  const fill = el('div', { className: 'progress-bar' })
+  fill.style.width = pct + '%'
+  bar.appendChild(fill)
+  wrap.appendChild(bar)
+  wrap.appendChild(el('div', { className: 'progress-meta', text: pct + '%' }))
+  return wrap
 }
 
 function render() {
@@ -197,35 +230,50 @@ function card(title, body, onClick) {
 
 async function runAudit() {
   state.busy = true
+  state.busyKind = 'audit'
   state.error = null
+  state.progress = { step: 'Starting', detail: 'Preparing system checks…', percent: 1 }
   render()
   try {
     state.audit = await go().RunAudit()
+    state.progress = { step: 'Updates', detail: 'Checking for updates on GitHub…', percent: 96 }
+    render()
     state.updates = await go().CheckForUpdates()
     if (state.audit?.installPath) state.installDir = state.audit.installPath
   } catch (e) {
-    state.error = String(e)
+    state.error = String(e?.message || e)
   }
   state.busy = false
+  state.busyKind = ''
   render()
 }
 
 async function runAuditOnly() {
   state.busy = true
+  state.busyKind = 'audit'
+  state.error = null
+  state.progress = { step: 'Starting', detail: 'Preparing system checks…', percent: 1 }
   render()
   try {
     state.audit = await go().RunAudit()
+    state.progress = { step: 'Updates', detail: 'Checking for updates on GitHub…', percent: 96 }
+    render()
     state.updates = await go().CheckForUpdates()
   } catch (e) {
-    state.error = String(e)
+    state.error = String(e?.message || e)
   }
   state.busy = false
+  state.busyKind = ''
   render()
 }
 
 function renderChecks(parent) {
+  if (state.busy && state.busyKind === 'audit') {
+    parent.appendChild(busyPanel('Checking this PC…'))
+    return
+  }
   if (!state.audit) {
-    parent.appendChild(el('p', { className: 'muted', text: state.busy ? 'Checking…' : 'No audit yet.' }))
+    parent.appendChild(el('p', { className: 'muted', text: 'No audit yet.' }))
     return
   }
   parent.appendChild(el('p', { className: 'muted', text: state.audit.summary }))

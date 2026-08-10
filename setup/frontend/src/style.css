@@ -112,6 +112,48 @@ h2 { margin: 0 0 10px; font-size: 16px; font-weight: 600; }
 }
 .progress-meta { margin-top: 8px; font-size: 12px; color: var(--ink-2); }
 
+.busy-panel {
+  margin: 12px 0 8px;
+  padding: 14px 14px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #0c0d10;
+}
+.busy-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.busy-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.busy-step {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--key);
+}
+.busy-detail {
+  font-size: 12px;
+  color: var(--ink-2);
+  margin-top: 3px;
+  line-height: 1.4;
+}
+.spinner {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid #2a2e38;
+  border-top-color: var(--key);
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 .cards { display: grid; gap: 10px; margin-top: 12px; }
 .card {
   border: 1px solid var(--line);

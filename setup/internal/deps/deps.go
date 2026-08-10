@@ -20,7 +20,7 @@ func EnsureOptional(progress ProgressFn) []string {
 		progress = func(string, string, int) {}
 	}
 	var notes []string
-	r := audit.Run()
+	r := audit.Run(nil)
 
 	if !r.FFmpegOK {
 		progress("ffmpeg", "Trying to install ffmpeg…", 40)

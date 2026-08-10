@@ -1,6 +1,7 @@
 package update
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -87,8 +88,11 @@ func Check() CheckResult {
 
 func fetchLatest() (ghRelease, error) {
 	var rel ghRelease
-	client := &http.Client{Timeout: 12 * time.Second}
-	req, err := http.NewRequest(http.MethodGet, paths.GitHubReleasesAPI, nil)
+	// Short timeout — private repos / offline machines must not hang Check PC.
+	client := &http.Client{Timeout: 5 * time.Second}
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, paths.GitHubReleasesAPI, nil)
 	if err != nil {
 		return rel, err
 	}

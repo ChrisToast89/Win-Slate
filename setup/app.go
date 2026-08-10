@@ -41,9 +41,12 @@ func (a *App) emitProgress(step, detail string, percent int) {
 	if a.ctx == nil {
 		return
 	}
-	runtime.EventsEmit(a.ctx, "install:progress", map[string]interface{}{
+	payload := map[string]interface{}{
 		"step": step, "detail": detail, "percent": percent,
-	})
+	}
+	// Same payload for install and audit UI (busy indicator).
+	runtime.EventsEmit(a.ctx, "install:progress", payload)
+	runtime.EventsEmit(a.ctx, "audit:progress", payload)
 }
 
 // GetPaths exposes constants and default destinations for the UI.
@@ -68,7 +71,10 @@ func (a *App) GetPaths() map[string]string {
 }
 
 func (a *App) RunAudit() audit.Report {
-	return audit.Run()
+	return audit.Run(func(step, detail string, percent int) {
+		logx.Log("audit [%d%%] %s — %s", percent, step, detail)
+		a.emitProgress(step, detail, percent)
+	})
 }
 
 func (a *App) GetInstallStatus() map[string]interface{} {
@@ -98,7 +104,14 @@ func (a *App) GetInstallStatus() map[string]interface{} {
 }
 
 func (a *App) CheckForUpdates() update.CheckResult {
-	return update.Check()
+	a.emitProgress("Updates", "Checking GitHub for a newer Win-Slate release (max ~5s)…", 96)
+	res := update.Check()
+	if res.OK {
+		a.emitProgress("Updates", res.Message, 100)
+	} else {
+		a.emitProgress("Updates", "Update check skipped or failed — offline install still works.", 100)
+	}
+	return res
 }
 
 // PickInstallFolder opens a directory picker; returns chosen path or empty if cancelled.
@@ -146,7 +159,9 @@ func (a *App) StartInstall(installDir string, desktopShortcut bool, isUpdate boo
 	}
 
 	progress("Check", "Re-checking this PC…", 8)
-	rep := audit.Run()
+	rep := audit.Run(func(step, detail string, percent int) {
+		a.emitProgress(step, detail, percent)
+	})
 	if !rep.CanProceed {
 		return nil, fmt.Errorf("%s", rep.Summary)
 	}
