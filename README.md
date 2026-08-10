@@ -64,10 +64,9 @@ You can use much of Slate without a brain; agent-style tools need one of the sup
 | | |
 |--|--|
 | **Win-Slate** (default) | `%LOCALAPPDATA%\Programs\Win-Slate` |
-| **Sam’s npm/Electron Slate** (other app) | `%LOCALAPPDATA%\Programs\Slate` — not managed by this Setup |
-| **Your projects** (shared) | `%USERPROFILE%\Documents\Slate` |
+| **Your projects** | `%USERPROFILE%\Documents\Slate` |
 
-Setup **never deletes or overwrites** your project files under Documents\Slate. Win-Slate and the npm package are different implementations; both may be installed.
+Setup **never deletes or overwrites** your project files under Documents\Slate.
 
 ---
 

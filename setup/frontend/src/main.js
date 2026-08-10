@@ -1,4 +1,4 @@
-// Win-Slate Setup — audit, update check, install. Separate from Sam's npm/Electron package.
+// Win-Slate Setup — audit, update check, install.
 
 const STEPS = ['Home', 'Check PC', 'Install', 'Finish']
 
@@ -113,7 +113,7 @@ function render() {
     el('div', { className: 'header' }, [
       el('h1', { text: '◆  Win-Slate Setup' }),
       el('p', {
-        text: 'Install Win-Slate — a standalone Windows binary of Slate. Separate from the npm/Electron package. Your Documents\\Slate projects are never modified.'
+        text: 'Install Win-Slate — a standalone Windows binary of Slate. Your Documents\\Slate projects are never modified.'
       }),
       el('p', { className: 'credit' }, [
         'Slate by ',
@@ -165,21 +165,9 @@ function viewHome() {
       className: 'muted',
       text: installed
         ? `Found Win-Slate: ${state.installStatus.installDir} (${state.installStatus.version || 'version unknown'})`
-        : 'No Win-Slate install yet. Default folder: Programs\\Win-Slate (not Programs\\Slate).'
+        : 'No Win-Slate install yet. Default folder: Programs\\Win-Slate.'
     })
   )
-  if (state.installStatus?.npmSlatePresent) {
-    box.appendChild(
-      el('p', {
-        className: 'muted',
-        text:
-          'Also detected: Sam’s npm/Electron Slate at ' +
-          (state.installStatus.npmSlatePath || 'Programs\\Slate') +
-          '. That is a different program — this Setup will not change it. Both can share Documents\\Slate projects.'
-      })
-    )
-  }
-
   const cards = el('div', { className: 'cards' })
   cards.appendChild(
     card(installed ? 'Update / reinstall Win-Slate' : 'Install Win-Slate', 'Check this PC, pick a folder, install the standalone app.', () => {
@@ -396,7 +384,7 @@ function viewInstall() {
   box.appendChild(
     el('p', {
       className: 'muted',
-      text: 'Choose the folder for Win-Slate program files (not Programs\\Slate — that is Sam’s npm/Electron package). Projects stay in Documents\\Slate and are never overwritten.'
+      text: 'Choose the folder for Win-Slate program files. Projects stay in Documents\\Slate and are never overwritten.'
     })
   )
 

@@ -122,34 +122,6 @@ func Discover() (installDir string, m *Manifest, ok bool) {
 	return "", nil, false
 }
 
-// NpmSlateInfo describes a coexisting install of Sam's npm/Electron Slate.
-type NpmSlateInfo struct {
-	Present bool   `json:"present"`
-	Path    string `json:"path"`
-	Detail  string `json:"detail"`
-}
-
-// DetectNpmSlate looks for the separate Electron package install.
-// It is informational only — Setup never updates or removes that tree.
-func DetectNpmSlate() NpmSlateInfo {
-	dir := paths.NpmSlateInstallDir()
-	exe := filepath.Join(dir, "Slate.exe")
-	st, err := os.Stat(exe)
-	if err != nil || st.IsDir() {
-		return NpmSlateInfo{Present: false, Path: dir, Detail: "Not found — OK to install Win-Slate alongside later"}
-	}
-	// If someone put our marker there by mistake, still label carefully
-	if IsWinSlateInstallDir(dir) {
-		return NpmSlateInfo{Present: false, Path: dir, Detail: "Folder has Win-Slate markers (unexpected under Programs\\Slate)"}
-	}
-	// Electron helper writes slate-install-manifest.json; package layout may also have resources/
-	detail := "Found Sam Wasserman's npm/Electron Slate at " + dir + " (separate product). Win-Slate will not modify it."
-	if _, err := os.Stat(filepath.Join(dir, "slate-install-manifest.json")); err == nil {
-		detail = "Found npm/Electron Slate install (slate-install-manifest.json) at " + dir + ". Coexists with Win-Slate."
-	}
-	return NpmSlateInfo{Present: true, Path: dir, Detail: detail}
-}
-
 type setupConfig struct {
 	InstallDir string `json:"installDir"`
 }

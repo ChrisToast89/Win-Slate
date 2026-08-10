@@ -46,8 +46,6 @@ type Report struct {
 	AlreadyInstalled bool   `json:"alreadyInstalled"`
 	InstallPath      string `json:"installPath"`
 	InstalledVersion string `json:"installedVersion"`
-	NpmSlatePresent  bool   `json:"npmSlatePresent"`
-	NpmSlatePath     string `json:"npmSlatePath"`
 	ProjectsDir      string `json:"projectsDir"`
 }
 
@@ -158,22 +156,11 @@ func Run(progress ProgressFn) Report {
 		})
 	}
 
-	progress("npm Slate", "Checking for Sam's npm/Electron Slate (separate product)…", 94)
-	npm := manifest.DetectNpmSlate()
-	r.NpmSlatePresent = npm.Present
-	r.NpmSlatePath = npm.Path
+	progress("Projects", "Confirming projects folder is protected…", 94)
 	r.Checks = append(r.Checks, Check{
-		ID: "npm-slate", Label: "Sam's Slate (npm / Electron package)", OK: true, Required: false,
-		Detail: npm.Detail,
-		Action: ternary(npm.Present,
-			"Leave it alone — Win-Slate is a different binary and installs elsewhere",
-			"Optional; install via the separate Slate Setup helper if you want the Electron build"),
-	})
-
-	r.Checks = append(r.Checks, Check{
-		ID: "projects", Label: "Projects folder (shared, protected)", OK: true, Required: false,
-		Detail: r.ProjectsDir + " — used by both Win-Slate and Sam's Slate; never modified by this Setup",
-		Action: "Never modified by Win-Slate Setup",
+		ID: "projects", Label: "Projects folder (protected)", OK: true, Required: false,
+		Detail: r.ProjectsDir + " — never modified by Win-Slate Setup",
+		Action: "Never modified by Setup",
 	})
 
 	r.CanProceed = r.WindowsOK && r.DiskOK && r.WebView2OK
