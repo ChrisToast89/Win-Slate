@@ -22,7 +22,7 @@
 2. **Reuse React UI + TS domain logic** for behavior parity.
 3. **Rewrite host only** in Go (Electron main/preload surface).
 4. **Apache-2.0 NOTICE** retained + Windows modification notes.
-5. **Version:** `0.3.2-win.1`
+5. **Version:** `1.0.0`
 
 ## Deliverable
 

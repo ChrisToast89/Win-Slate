@@ -13,7 +13,7 @@
   "info": {
     "companyName": "Based on Slate by Sam Wasserman",
     "productName": "Win-Slate Setup",
-    "productVersion": "0.3.2-win.1",
+    "productVersion": "1.0.0",
     "copyright": "Copyright 2026 Sam Wasserman. Windows packaging is a derivative work under Apache-2.0.",
     "comments": "Installer for Win-Slate — derivative of Slate by Sam Wasserman"
   },

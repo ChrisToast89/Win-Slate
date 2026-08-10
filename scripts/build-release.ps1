@@ -6,7 +6,7 @@ $root = Split-Path -Parent $PSScriptRoot
 Set-Location $root
 
 $versionFile = Join-Path $root "VERSION"
-$version = if (Test-Path $versionFile) { (Get-Content $versionFile -Raw).Trim() } else { "0.3.2-win.1" }
+$version = if (Test-Path $versionFile) { (Get-Content $versionFile -Raw).Trim() } else { "1.0.0" }
 $dist = Join-Path $root "distributable"
 $stage = Join-Path $dist "Win-Slate-v$version"
 $payloadDir = Join-Path $root "setup\payload"

@@ -1,14 +1,14 @@
 # Win-Slate
 
+**Version 1.0.0**
+
 Windows version of **[Slate](https://github.com/wassermanproductions/slate)** — the prompt studio for AI filmmaking — created by **[Sam Wasserman](https://wassermanproductions.com)**.
 
 <img width="320" alt="image" src="https://github.com/user-attachments/assets/1e88f42c-9285-4b79-9836-9406424b508a" />
 
-This is a binary executable for locally running Sam's Slate application.
+This is a ready-to-run **Windows binary** of Slate (Go + Wails), with a Setup installer. It is an **unofficial** derivative packaging — not an official Wasserman release.
 
-Some additional configuration may be required.
-
-Download the **Setup zip**, extract it, and run the Setup program.
+Download the **Setup zip**, extract it, and run the Setup program. You do **not** need to compile anything.
 
 ---
 
@@ -17,18 +17,19 @@ Download the **Setup zip**, extract it, and run the Setup program.
 ### Installer (recommended)
 <img width="320" alt="image" src="https://github.com/user-attachments/assets/571986e6-f136-4cef-8595-bb5c8a6e2fb0" />
 
-**→ [Win-Slate-Setup.zip](./Win-Slate-Setup.zip)** — in this repository’s root folder  
+**→ [Win-Slate-Setup.zip](./Win-Slate-Setup.zip)** — repository root  
 
 Contains `Win-Slate-Setup.exe` plus LICENSE / NOTICE / INSTALL notes.  
-Downloading a **zip** is usually smoother than a raw `.exe` (Windows SmartScreen is harder on bare executables).
+A **zip** is usually smoother than downloading a bare `.exe` (Windows SmartScreen).
 
-- On GitHub: open **`Win-Slate-Setup.zip`** in the file list → **Download**  
-- Direct link: [raw Win-Slate-Setup.zip](https://github.com/ChrisToast89/Win-Slate/raw/main/Win-Slate-Setup.zip)
+- On GitHub: open **`Win-Slate-Setup.zip`** → **Download**  
+- Direct: [Win-Slate-Setup.zip](https://github.com/ChrisToast89/Win-Slate/raw/main/Win-Slate-Setup.zip)
 
-### Full package (optional)
+### Release v1.0.0 (full package)
 
-Larger release packages (Setup + portable app) may appear under  
-[Releases](https://github.com/ChrisToast89/Win-Slate/releases) when published.
+**[Win-Slate v1.0.0 on Releases](https://github.com/ChrisToast89/Win-Slate/releases/tag/v1.0.0)**  
+
+Assets include **`Win-Slate-Setup.zip`** and the full package zip (Setup + portable `Win-Slate.exe` + licenses).
 
 ---
 
@@ -98,11 +99,21 @@ Optional:
 You can ignore the details and just click through; this is only for the curious:
 
 - Checks that your PC can run the app  
-- Can look for a newer version on this GitHub project  
-- Installs or updates the program into the folder you choose  
+- Installs or updates Win-Slate into the folder you choose  
+- Can uninstall an existing Win-Slate install (projects kept)  
 - Can help with optional tools (ffmpeg, Claude Code)  
 - Adds Start Menu / optional Desktop shortcuts  
 - Does **not** touch your Documents\Slate projects  
+
+---
+
+## What’s new in 1.0.0
+
+- First stable public release of **Win-Slate**  
+- Setup: system check with live progress, install/update, uninstall, folder browse  
+- Standalone **`Win-Slate.exe`** (does not replace Sam’s npm/Electron Slate install)  
+- Installer distributed as **`Win-Slate-Setup.zip`** for fewer SmartScreen issues  
+- Full credit to Sam Wasserman / upstream Slate (Apache-2.0)  
 
 ---
 

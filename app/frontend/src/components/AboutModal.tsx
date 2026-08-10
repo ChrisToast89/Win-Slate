@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from 'react'
 import brandArt from '../assets/brand.webp'
 
-const FALLBACK_VERSION = '0.3.2-win.1'
+const FALLBACK_VERSION = '1.0.0'
 
 export default function AboutModal({ onClose }: { onClose(): void }): React.JSX.Element {
   const [version, setVersion] = useState(FALLBACK_VERSION)

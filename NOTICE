@@ -14,8 +14,8 @@ the Apache License 2.0.
 ---------------------------------------------------------------------------
 Win-Slate (this repository; formerly slate-for-windows)
 
-A self-contained Windows executable build and installer for Slate —
-derivative work of Slate v0.3.2 under Apache-2.0. This is a recompile /
+Win-Slate 1.0.0 — a self-contained Windows executable build and installer
+for Slate, derivative work of Slate under Apache-2.0. This is a recompile /
 host port based on Sam Wasserman's work; it is not an official Wasserman
 release and is offered WITHOUT WARRANTY OF ANY KIND (see Apache-2.0
 Sections 7–8 and the project README).

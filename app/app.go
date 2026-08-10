@@ -189,7 +189,7 @@ func (a *App) FileAsDataURL(path string) (string, error) {
 
 // AppVersion for About panel.
 func (a *App) AppVersion() string {
-	return "0.3.2-win.1"
+	return "1.0.0"
 }
 
 // OpenExternal opens a URL in the default browser.

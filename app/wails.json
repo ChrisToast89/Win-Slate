@@ -13,7 +13,7 @@
   "info": {
     "companyName": "Based on Slate by Sam Wasserman",
     "productName": "Win-Slate",
-    "productVersion": "0.3.2-win.1",
+    "productVersion": "1.0.0",
     "copyright": "Copyright 2026 Sam Wasserman. Win-Slate is a derivative work under Apache-2.0.",
     "comments": "Win-Slate — Windows port of Slate by Sam Wasserman (Apache-2.0)"
   },

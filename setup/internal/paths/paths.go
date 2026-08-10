@@ -12,8 +12,8 @@ const (
 	ProductName = "Win-Slate"
 	// AppExeName is distinct from upstream npm package "Slate.exe" under Programs\Slate.
 	AppExeName       = "Win-Slate.exe"
-	SetupVersion     = "0.3.2-win.1"
-	AppVersion       = "0.3.2-win.1"
+	SetupVersion     = "1.0.0"
+	AppVersion       = "1.0.0"
 	GitHubOwner      = "ChrisToast89"
 	GitHubRepo       = "Win-Slate"
 	UpstreamSlateURL = "https://github.com/wassermanproductions/slate"

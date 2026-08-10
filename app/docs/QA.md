@@ -29,7 +29,7 @@ Run `.\Slate.exe` and verify:
 - [ ] Brain test pill (needs local or CLI brain)
 - [ ] First AD panel
 - [ ] Studios / Sound / Refs / Stills
-- [x] About shows Sam Wasserman credit + version `0.3.2-win.1`
+- [x] About shows Sam Wasserman credit + version `1.0.0`
 - [x] Help / About menu items wired
 - [x] MCP bridge tools (all 13)
 
