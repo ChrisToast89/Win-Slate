@@ -18,7 +18,8 @@ $siblingLegacy = Join-Path (Split-Path -Parent $root) "slate-windows\Slate.exe"
 New-Item -ItemType Directory -Force -Path $dist, $stage, $payloadDir | Out-Null
 
 function Resolve-AppBinary {
-    foreach ($cand in @($siblingExe, $appRootExe, $siblingLegacy, (Join-Path $root "app\Slate.exe"))) {
+    # Prefer monorepo app build; sibling trees are fallback only.
+    foreach ($cand in @($appRootExe, $siblingExe, (Join-Path $root "app\Slate.exe"), $siblingLegacy)) {
         if (Test-Path $cand) {
             Write-Host "Using app binary: $cand" -ForegroundColor Cyan
             return (Resolve-Path $cand).Path
