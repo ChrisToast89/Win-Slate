@@ -85,23 +85,22 @@ jobs:
           $tag = "${{ steps.ver.outputs.tag }}"
           $ver = "${{ steps.ver.outputs.version }}"
           $zip = "distributable/Win-Slate-v$ver.zip"
-          $setup = "Win-Slate-Setup.exe"
+          $setupZip = "Win-Slate-Setup.zip"
           $notes = "distributable/RELEASE_NOTES-v$ver.md"
-          if (-not (Test-Path $setup)) { $setup = "distributable/Win-Slate-v$ver/Win-Slate-Setup.exe" }
+          if (-not (Test-Path $setupZip)) { throw "missing $setupZip" }
           if (-not (Test-Path $zip)) { throw "missing $zip" }
-          if (-not (Test-Path $setup)) { throw "missing Setup.exe" }
           if (-not (Test-Path $notes)) { throw "missing $notes" }
 
-          # Release assets are canonical for end users. Attribution is in notes + zip NOTICE/ATTRIBUTION.
+          # Prefer zips for download (less SmartScreen friction than bare .exe).
           $exists = $true
           gh release view $tag 2>$null
           if ($LASTEXITCODE -ne 0) { $exists = $false }
 
           if ($exists) {
-            gh release upload $tag $setup $zip --clobber
+            gh release upload $tag $setupZip $zip --clobber
             gh release edit $tag --notes-file $notes --title "Win-Slate $tag"
           } else {
-            gh release create $tag $setup $zip `
+            gh release create $tag $setupZip $zip `
               --title "Win-Slate $tag" `
               --notes-file $notes
           }

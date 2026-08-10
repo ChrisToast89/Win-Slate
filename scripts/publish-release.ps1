@@ -50,13 +50,17 @@ $dist = Join-Path $root "distributable"
 $stage = Join-Path $dist "Win-Slate-v$versionBare"
 $zip = Join-Path $dist "Win-Slate-v$versionBare.zip"
 $setupRoot = Join-Path $root "Win-Slate-Setup.exe"
+$setupZipRoot = Join-Path $root "Win-Slate-Setup.zip"
 $setupStage = Join-Path $stage "Win-Slate-Setup.exe"
 
 if (-not (Test-Path $setupRoot) -and (Test-Path $setupStage)) {
     Copy-Item -Force $setupStage $setupRoot
 }
 if (-not (Test-Path $setupRoot)) {
-    throw "Missing $setupRoot — build first or place Setup at repo root"
+    throw "Missing $setupRoot — build first"
+}
+if (-not (Test-Path $setupZipRoot)) {
+    throw "Missing $setupZipRoot — run build-release.ps1 to pack Setup into a zip"
 }
 if (-not (Test-Path $zip)) {
     if (-not (Test-Path $stage)) {
@@ -86,9 +90,9 @@ $notesFile = & (Join-Path $root "scripts\generate-release-notes.ps1") -Version $
 if ($notesFile -is [array]) { $notesFile = $notesFile[-1] }
 
 Write-Host "Assets:" -ForegroundColor Green
-Write-Host "  Setup: $setupRoot"
-Write-Host "  Zip:   $zip"
-Write-Host "  Notes: $notesFile"
+Write-Host "  Setup zip: $setupZipRoot"
+Write-Host "  Full zip:  $zip"
+Write-Host "  Notes:     $notesFile"
 
 if ($DryRun) {
     Write-Host "DryRun: would create tag $tag and gh release with Setup + zip + attribution notes." -ForegroundColor Yellow
@@ -97,12 +101,11 @@ if ($DryRun) {
 
 # --- Git: optional commit of root Setup.exe ---
 if (-not $SkipRootCommit) {
-    git add VERSION Win-Slate-Setup.exe ATTRIBUTION.md docs/RELEASE_NOTES_TEMPLATE.md 2>$null
+    git add VERSION Win-Slate-Setup.zip ATTRIBUTION.md docs/RELEASE_NOTES_TEMPLATE.md 2>$null
     git add scripts/*.ps1 .github 2>$null
     $status = git status --porcelain
     if ($status) {
-        git add -A -- VERSION Win-Slate-Setup.exe
-        # Only stage publish tooling if present
+        git add -A -- VERSION Win-Slate-Setup.zip
         foreach ($p in @(
                 "ATTRIBUTION.md", "VERSION", "NOTICE", "README.md",
                 "scripts/build-release.ps1", "scripts/publish-release.ps1",
@@ -131,10 +134,10 @@ git push origin $tag 2>&1
 $relExists = gh release view $tag --repo ChrisToast89/Win-Slate 2>$null
 if ($LASTEXITCODE -eq 0) {
     Write-Host "Release $tag exists — uploading/clobbering assets…" -ForegroundColor Yellow
-    gh release upload $tag $setupRoot $zip --clobber --repo ChrisToast89/Win-Slate
+    gh release upload $tag $setupZipRoot $zip --clobber --repo ChrisToast89/Win-Slate
     gh release edit $tag --notes-file $notesFile --repo ChrisToast89/Win-Slate
 } else {
-    gh release create $tag $setupRoot $zip `
+    gh release create $tag $setupZipRoot $zip `
         --title "Win-Slate $tag" `
         --notes-file $notesFile `
         --repo ChrisToast89/Win-Slate

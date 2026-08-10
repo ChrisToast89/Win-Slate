@@ -8,7 +8,7 @@ This is a binary executable for locally running Sam's Slate application.
 
 Some additional configuration may be required.
 
-Download the zip, unzip it, and run the Setup program.
+Download the **Setup zip**, extract it, and run the Setup program.
 
 ---
 
@@ -17,31 +17,35 @@ Download the zip, unzip it, and run the Setup program.
 ### Installer (recommended)
 <img width="320" alt="image" src="https://github.com/user-attachments/assets/571986e6-f136-4cef-8595-bb5c8a6e2fb0" />
 
+**→ [Win-Slate-Setup.zip](./Win-Slate-Setup.zip)** — in this repository’s root folder  
 
-**→ [Win-Slate-Setup.exe](./Win-Slate-Setup.exe)**
+Contains `Win-Slate-Setup.exe` plus LICENSE / NOTICE / INSTALL notes.  
+Downloading a **zip** is usually smoother than a raw `.exe` (Windows SmartScreen is harder on bare executables).
 
-On GitHub: open that file in the file list, then **Download** (or use [this direct link](https://github.com/ChrisToast89/Win-Slate/raw/main/Win-Slate-Setup.exe)).
+- On GitHub: open **`Win-Slate-Setup.zip`** in the file list → **Download**  
+- Direct link: [raw Win-Slate-Setup.zip](https://github.com/ChrisToast89/Win-Slate/raw/main/Win-Slate-Setup.zip)
 
-### Full package (zip)
+### Full package (optional)
 
-Also available as a zip (Setup + portable app + license files):  
-**[Win-Slate-v0.3.2-win.1.zip](https://github.com/ChrisToast89/Win-Slate/releases/download/v0.3.2-win.1/Win-Slate-v0.3.2-win.1.zip)** · [all releases](https://github.com/ChrisToast89/Win-Slate/releases)
+Larger release packages (Setup + portable app) may appear under  
+[Releases](https://github.com/ChrisToast89/Win-Slate/releases) when published.
 
 ---
 
 ## Install (simple steps)
 
-1. Download **`Win-Slate-Setup.exe`** (link above).
-2. Double‑click **`Win-Slate-Setup.exe`**.
-3. If Windows SmartScreen appears, choose **More info** → **Run anyway** (common for new apps that are not Microsoft-signed).
-4. Follow the on‑screen steps: check your PC → pick a folder (or accept the default) → **Install**.
-5. When it finishes, open **Win-Slate** from the Start Menu, or use **Launch** in Setup.
+1. Download **`Win-Slate-Setup.zip`** (link above).
+2. Right‑click the zip → **Extract All…** (or use any unzip tool).
+3. Open the extracted folder and double‑click **`Win-Slate-Setup.exe`**.
+4. If Windows SmartScreen appears, choose **More info** → **Run anyway** (common for apps that are not Microsoft-signed yet).
+5. Follow the on‑screen steps: check your PC → pick a folder (or accept the default) → **Install**.
+6. When it finishes, open **Win-Slate** from the Start Menu, or use **Launch** in Setup.
 
 **That’s it.** You do not need to build or compile the program yourself.
 
 ### Portable option
 
-The release zip also includes **`Win-Slate.exe`**, which can run without Setup. Setup is still recommended for Start Menu shortcuts and a simple install path.
+If a full release zip is available, it may also include **`Win-Slate.exe`** to run without Setup. The root **`Win-Slate-Setup.zip`** is still the recommended path for most people.
 
 ### After install (optional — AI features)
 

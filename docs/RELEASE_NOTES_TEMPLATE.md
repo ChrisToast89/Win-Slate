@@ -2,10 +2,10 @@
 
 ## Download for users
 
-- **Setup (recommended):** `Win-Slate-Setup.exe` (also at repository root on `main`)
-- **Full package:** `Win-Slate-v{{VERSION}}.zip` (Setup + portable `Slate.exe` + licenses)
+- **Setup (recommended):** `Win-Slate-Setup.zip` at the repository root (extract, then run `Win-Slate-Setup.exe`)
+- **Full package:** `Win-Slate-v{{VERSION}}.zip` (Setup + portable `Win-Slate.exe` + licenses)
 
-You do **not** need to compile anything. Download, run Setup, follow the prompts.
+You do **not** need to compile anything. Download the zip, extract, run Setup, follow the prompts.
 
 ---
 
@@ -25,8 +25,8 @@ Generative coding tools assisted the Windows port and packaging. The original pr
 
 ## What’s in this package
 
-- `Win-Slate-Setup.exe` — installer (audit PC, choose folder, optional tools)
-- `Slate.exe` — portable app binary
+- `Win-Slate-Setup.zip` / `Win-Slate-Setup.exe` — installer (audit PC, choose folder, optional tools)
+- `Win-Slate.exe` — portable app binary
 - `LICENSE.txt`, `NOTICE.txt`, `INSTALL.txt`, `README.md`
 
 Projects stay in `%USERPROFILE%\Documents\Slate` and are never deleted by Setup.

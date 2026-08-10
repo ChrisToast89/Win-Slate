@@ -4,13 +4,16 @@ node_modules/
 **/frontend/node_modules/
 **/build/bin/
 **/*.exe
-# End-user Setup installer — kept at repo root and tracked in git
-!/Win-Slate-Setup.exe
+# Prefer distributing Setup as a zip (less SmartScreen friction than raw .exe downloads)
+!/Win-Slate-Setup.zip
+# Local/build copy of Setup.exe is not tracked — pack into the zip instead
+Win-Slate-Setup.exe
 !setup/payload/.gitkeep
 setup/payload/Win-Slate.exe
 setup/payload/Slate.exe
 dist/
 distributable/
+download/
 *.log
 tmp/
 .DS_Store

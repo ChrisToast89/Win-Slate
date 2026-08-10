@@ -65,6 +65,7 @@ if ($LASTEXITCODE -ne 0) { throw "setup wails build failed" }
 
 $setupWailsOut = Join-Path $root "setup\build\bin\Win-Slate-Setup.exe"
 $setupRepoRoot = Join-Path $root "Win-Slate-Setup.exe"
+$setupZipRoot = Join-Path $root "Win-Slate-Setup.zip"
 if (-not (Test-Path $setupWailsOut)) { throw "missing $setupWailsOut" }
 Copy-Item -Force $setupWailsOut $setupRepoRoot
 Copy-Item -Force $setupWailsOut (Join-Path $stage "Win-Slate-Setup.exe")
@@ -96,12 +97,23 @@ Upstream: https://github.com/wassermanproductions/slate
 This package: https://github.com/ChrisToast89/Win-Slate
 "@ | Set-Content -Encoding utf8 (Join-Path $stage "INSTALL.txt")
 
+# Repo-root download zip (Setup only) — preferred end-user download vs raw .exe
+$setupOnlyDir = Join-Path $root "download\Win-Slate-Setup"
+New-Item -ItemType Directory -Force -Path $setupOnlyDir | Out-Null
+Copy-Item -Force $setupRepoRoot (Join-Path $setupOnlyDir "Win-Slate-Setup.exe")
+Copy-Item -Force (Join-Path $root "LICENSE") (Join-Path $setupOnlyDir "LICENSE.txt")
+Copy-Item -Force (Join-Path $root "NOTICE") (Join-Path $setupOnlyDir "NOTICE.txt")
+Copy-Item -Force (Join-Path $stage "INSTALL.txt") (Join-Path $setupOnlyDir "INSTALL.txt")
+if (Test-Path $setupZipRoot) { Remove-Item -Force $setupZipRoot }
+Compress-Archive -Path (Join-Path $setupOnlyDir "*") -DestinationPath $setupZipRoot -Force
+
 $zip = Join-Path $dist "Win-Slate-v$version.zip"
 if (Test-Path $zip) { Remove-Item -Force $zip }
 Compress-Archive -Path (Join-Path $stage "*") -DestinationPath $zip -Force
 
 Write-Host "OK: $zip" -ForegroundColor Green
-Write-Host "    App source: $appExe" -ForegroundColor Green
-Write-Host "    Payload:    $payloadExe" -ForegroundColor Green
-Write-Host "    Setup root: $setupRepoRoot" -ForegroundColor Green
-Write-Host "    Package:    $stage" -ForegroundColor Green
+Write-Host "    App source:  $appExe" -ForegroundColor Green
+Write-Host "    Payload:     $payloadExe" -ForegroundColor Green
+Write-Host "    Setup exe:   $setupRepoRoot (local build only)" -ForegroundColor Green
+Write-Host "    Setup zip:   $setupZipRoot (repo download)" -ForegroundColor Green
+Write-Host "    Full package:$stage" -ForegroundColor Green
