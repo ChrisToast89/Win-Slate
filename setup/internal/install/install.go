@@ -60,7 +60,7 @@ func Run(opts Options, progress ProgressFn) (Result, error) {
 		return res, err
 	}
 	if len(opts.Payload) < 1024 {
-		return res, fmt.Errorf("embedded Slate.exe payload is missing or too small — rebuild Setup with payload")
+		return res, fmt.Errorf("embedded Win-Slate.exe payload is missing or too small — rebuild Setup with payload")
 	}
 
 	label := "Installing"
@@ -84,7 +84,7 @@ func Run(opts Options, progress ProgressFn) (Result, error) {
 	if err := os.Rename(tmp, exePath); err != nil {
 		// fallback copy
 		if err2 := os.WriteFile(exePath, opts.Payload, 0o755); err2 != nil {
-			return res, fmt.Errorf("place Slate.exe (is it running?): %w", err2)
+			return res, fmt.Errorf("place %s (is it running?): %w", paths.AppExeName, err2)
 		}
 		_ = os.Remove(tmp)
 	}
@@ -106,10 +106,12 @@ func Run(opts Options, progress ProgressFn) (Result, error) {
 		res.DesktopOK = createShortcut(paths.DesktopShortcut(), exePath, dest) == nil
 	}
 
-	progress("Smoke test", "Starting Slate briefly to verify…", 94)
+	progress("Smoke test", "Starting Win-Slate briefly to verify…", 94)
 	res.SmokeOK, res.SmokeDetail = smokeTest(exePath)
 
 	_ = manifest.Write(manifest.Manifest{
+		Product:      paths.ProductName,
+		Kind:         paths.InstallKind,
 		AppVersion:   paths.AppVersion,
 		SetupVersion: paths.SetupVersion,
 		ReleaseTag:   res.ReleaseTag,

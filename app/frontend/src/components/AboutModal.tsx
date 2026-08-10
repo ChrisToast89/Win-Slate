@@ -28,9 +28,9 @@ export default function AboutModal({ onClose }: { onClose(): void }): React.JSX.
             makes the prompts, your generators make the picture and sound.
           </p>
           <p className="about-meta">
-            Version {version} · Apache-2.0 · Created by Sam Wasserman
+            <b>Win-Slate</b> {version} · Apache-2.0
             <br />
-            Windows port: personal derivative of Slate 0.3.2 (Go + Wails host).
+            Slate created by <b>Sam Wasserman</b> · unofficial Windows port (Go + Wails)
             <br />
             Brain: your Claude Code or Codex sign-in, or a local model — no API keys.
             <br />
@@ -43,7 +43,11 @@ export default function AboutModal({ onClose }: { onClose(): void }): React.JSX.
             </a>
             <br />
             <a href="https://github.com/wassermanproductions/slate" target="_blank" rel="noreferrer">
-              Original source on GitHub
+              Original Slate on GitHub
+            </a>
+            {' · '}
+            <a href="https://github.com/ChrisToast89/Win-Slate" target="_blank" rel="noreferrer">
+              Win-Slate
             </a>
           </p>
           <div style={{ display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap' }}>

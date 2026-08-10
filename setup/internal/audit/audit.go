@@ -37,10 +37,13 @@ type Report struct {
 	NodeOK           bool    `json:"nodeOk"`
 	ClaudeOK         bool    `json:"claudeOk"`
 	CodexOK          bool    `json:"codexOk"`
-	AlreadyInstalled bool    `json:"alreadyInstalled"`
-	InstallPath      string  `json:"installPath"`
-	InstalledVersion string  `json:"installedVersion"`
-	ProjectsDir      string  `json:"projectsDir"`
+	AlreadyInstalled bool   `json:"alreadyInstalled"`
+	InstallPath      string `json:"installPath"`
+	InstalledVersion string `json:"installedVersion"`
+	// Separate product: Sam's npm/Electron Slate (Programs\Slate). Informational only.
+	NpmSlatePresent bool   `json:"npmSlatePresent"`
+	NpmSlatePath    string `json:"npmSlatePath"`
+	ProjectsDir     string `json:"projectsDir"`
 }
 
 func Run() Report {
@@ -112,6 +115,7 @@ func Run() Report {
 		Action: "Optional alternative to Claude Code",
 	})
 
+	// Win-Slate only (manifest kind win-slate-wails) — never Programs\Slate npm install.
 	if dir, m, ok := manifest.Discover(); ok {
 		r.AlreadyInstalled = true
 		r.InstallPath = dir
@@ -121,25 +125,37 @@ func Run() Report {
 				r.InstalledVersion = m.ReleaseTag
 			}
 		} else {
-			r.InstalledVersion = "(unknown — no manifest)"
+			r.InstalledVersion = "(unknown)"
 		}
 		r.Checks = append(r.Checks, Check{
-			ID: "existing", Label: "Existing Win-Slate install", OK: true, Required: false,
+			ID: "existing-winslate", Label: "Win-Slate (this app)", OK: true, Required: false,
 			Detail: r.InstallPath + " · " + r.InstalledVersion,
-			Action: "You can update in place or choose a different folder",
+			Action: "Update in place or choose a different folder for Win-Slate",
 		})
 	} else {
 		r.Checks = append(r.Checks, Check{
-			ID: "existing", Label: "Existing install", OK: true, Required: false,
-			Detail: "None found — fresh install",
-			Action: "Will install to the folder you choose",
+			ID: "existing-winslate", Label: "Win-Slate (this app)", OK: true, Required: false,
+			Detail: "Not installed yet — will use the folder you choose (default: Programs\\Win-Slate)",
+			Action: "Fresh Win-Slate install",
 		})
 	}
 
+	// Coexisting product: Sam's npm/Electron Slate (separate implementation).
+	npm := manifest.DetectNpmSlate()
+	r.NpmSlatePresent = npm.Present
+	r.NpmSlatePath = npm.Path
 	r.Checks = append(r.Checks, Check{
-		ID: "projects", Label: "Projects folder (protected)", OK: true, Required: false,
-		Detail: r.ProjectsDir,
-		Action: "Never modified by Setup",
+		ID: "npm-slate", Label: "Sam's Slate (npm / Electron package)", OK: true, Required: false,
+		Detail: npm.Detail,
+		Action: ternary(npm.Present,
+			"Leave it alone — Win-Slate is a different binary and installs elsewhere",
+			"Optional; install via the separate Slate Setup helper if you want the Electron build"),
+	})
+
+	r.Checks = append(r.Checks, Check{
+		ID: "projects", Label: "Projects folder (shared, protected)", OK: true, Required: false,
+		Detail: r.ProjectsDir + " — used by both Win-Slate and Sam's Slate; never modified by this Setup",
+		Action: "Never modified by Win-Slate Setup",
 	})
 
 	r.CanProceed = r.WindowsOK && r.DiskOK && r.WebView2OK

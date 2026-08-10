@@ -102,7 +102,7 @@ export default function Home(): React.JSX.Element {
 
         <div className="home-foot">
           <button className="btn btn-ghost btn-sm" onClick={() => setShowAbout(true)}>
-            About Slate
+            About
           </button>
         </div>
       </div>

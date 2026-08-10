@@ -9,9 +9,12 @@ import (
 	"github.com/ChrisToast89/Win-Slate/setup/internal/paths"
 )
 
-// Manifest records what Setup installed (for audit + update checks).
+// Manifest records what Win-Slate Setup installed (for audit + update checks).
+// Kind + Product identify this Wails port so we never confuse it with the
+// separate npm/Electron install of Sam Wasserman's Slate.
 type Manifest struct {
 	Product        string `json:"product"`
+	Kind           string `json:"kind"` // paths.InstallKind
 	AppVersion     string `json:"appVersion"`
 	SetupVersion   string `json:"setupVersion"`
 	ReleaseTag     string `json:"releaseTag,omitempty"`
@@ -27,12 +30,18 @@ func Write(m Manifest) error {
 		return err
 	}
 	m.Product = paths.ProductName
+	m.Kind = paths.InstallKind
 	m.UpstreamCredit = paths.UpstreamAuthor + " — " + paths.UpstreamSlateURL
 	raw, err := json.MarshalIndent(m, "", "  ")
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(paths.ManifestPath(m.InstallDir), raw, 0o644)
+	if err := os.WriteFile(paths.ManifestPath(m.InstallDir), raw, 0o644); err != nil {
+		return err
+	}
+	// Marker file: presence alone is not enough for Discover, but helps humans.
+	_ = os.WriteFile(filepath.Join(m.InstallDir, paths.MarkerFile()), []byte(paths.InstallKind+"\n"), 0o644)
+	return nil
 }
 
 func Read(installDir string) (*Manifest, error) {
@@ -47,30 +56,98 @@ func Read(installDir string) (*Manifest, error) {
 	return &m, nil
 }
 
-// Discover finds an existing install via config, default path, or common locations.
+// IsOurs reports whether a manifest belongs to Win-Slate (not npm Slate).
+func IsOurs(m *Manifest) bool {
+	if m == nil {
+		return false
+	}
+	if m.Kind == paths.InstallKind {
+		return true
+	}
+	// Legacy manifests written before Kind existed: product name only.
+	// Never accept empty product — that would match random folders.
+	p := strings.TrimSpace(m.Product)
+	return p == paths.ProductName || p == "Slate for Windows"
+}
+
+// HasWinSlateExe returns true if our binary (or transitional names) is present.
+func HasWinSlateExe(installDir string) bool {
+	cands := []string{
+		paths.InstalledExe(installDir),
+		// Transitional: early Win-Slate builds still named the exe Slate.exe
+		// but only count when our manifest is also present (checked by caller).
+		filepath.Join(installDir, "Slate.exe"),
+	}
+	for _, c := range cands {
+		if st, err := os.Stat(c); err == nil && !st.IsDir() {
+			return true
+		}
+	}
+	return false
+}
+
+// IsWinSlateInstallDir is true only when this folder is a real Win-Slate install.
+func IsWinSlateInstallDir(installDir string) bool {
+	if installDir == "" || paths.IsNpmSlateInstallDir(installDir) {
+		return false
+	}
+	m, err := Read(installDir)
+	if err != nil || !IsOurs(m) {
+		return false
+	}
+	return HasWinSlateExe(installDir)
+}
+
+// Discover finds an existing *Win-Slate* install only (never npm/Electron Slate).
 func Discover() (installDir string, m *Manifest, ok bool) {
-	// 1) Last path from setup config
+	// 1) Last path from Win-Slate setup config
 	if cfg, err := readConfig(); err == nil && cfg.InstallDir != "" {
-		if st, err := os.Stat(paths.InstalledExe(cfg.InstallDir)); err == nil && !st.IsDir() {
+		if IsWinSlateInstallDir(cfg.InstallDir) {
 			mm, _ := Read(cfg.InstallDir)
 			return cfg.InstallDir, mm, true
 		}
 	}
-	// 2) Default (Win-Slate)
+	// 2) Default Win-Slate directory
 	def := paths.DefaultInstallDir()
-	if st, err := os.Stat(paths.InstalledExe(def)); err == nil && !st.IsDir() {
+	if IsWinSlateInstallDir(def) {
 		mm, _ := Read(def)
 		return def, mm, true
 	}
-	// 3) Previous product folder name
-	for _, legacyName := range []string{"Slate for Windows", "Slate"} {
-		legacy := filepath.Join(paths.LocalAppData(), "Programs", legacyName)
-		if st, err := os.Stat(paths.InstalledExe(legacy)); err == nil && !st.IsDir() {
-			mm, _ := Read(legacy)
-			return legacy, mm, true
-		}
+	// 3) Previous Win-Slate product folder name only (not Programs\Slate)
+	legacy := filepath.Join(paths.LocalAppData(), "Programs", "Slate for Windows")
+	if IsWinSlateInstallDir(legacy) {
+		mm, _ := Read(legacy)
+		return legacy, mm, true
 	}
 	return "", nil, false
+}
+
+// NpmSlateInfo describes a coexisting install of Sam's npm/Electron Slate.
+type NpmSlateInfo struct {
+	Present bool   `json:"present"`
+	Path    string `json:"path"`
+	Detail  string `json:"detail"`
+}
+
+// DetectNpmSlate looks for the separate Electron package install.
+// It is informational only — Setup never updates or removes that tree.
+func DetectNpmSlate() NpmSlateInfo {
+	dir := paths.NpmSlateInstallDir()
+	exe := filepath.Join(dir, "Slate.exe")
+	st, err := os.Stat(exe)
+	if err != nil || st.IsDir() {
+		return NpmSlateInfo{Present: false, Path: dir, Detail: "Not found — OK to install Win-Slate alongside later"}
+	}
+	// If someone put our marker there by mistake, still label carefully
+	if IsWinSlateInstallDir(dir) {
+		return NpmSlateInfo{Present: false, Path: dir, Detail: "Folder has Win-Slate markers (unexpected under Programs\\Slate)"}
+	}
+	// Electron helper writes slate-install-manifest.json; package layout may also have resources/
+	detail := "Found Sam Wasserman's npm/Electron Slate at " + dir + " (separate product). Win-Slate will not modify it."
+	if _, err := os.Stat(filepath.Join(dir, "slate-install-manifest.json")); err == nil {
+		detail = "Found npm/Electron Slate install (slate-install-manifest.json) at " + dir + ". Coexists with Win-Slate."
+	}
+	return NpmSlateInfo{Present: true, Path: dir, Detail: detail}
 }
 
 type setupConfig struct {
@@ -94,7 +171,6 @@ func SaveConfig(installDir string) error {
 }
 
 func VersionLooksNewer(remote, local string) bool {
-	// Strip leading v; simple string compare on semver-ish tags after normalize.
 	r := strings.TrimPrefix(strings.TrimSpace(remote), "v")
 	l := strings.TrimPrefix(strings.TrimSpace(local), "v")
 	if r == "" || l == "" {

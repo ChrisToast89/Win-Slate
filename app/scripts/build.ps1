@@ -1,25 +1,29 @@
 # Production build for Slate (Windows).
 # Always use this (or `wails build`) — plain `go build` lacks Wails tags and will fail at launch.
 #
-# Copies the binary to the repo root so you can run:  .\Slate.exe
+# Moves the binary to the app folder root: .\Win-Slate.exe
 
 $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $PSScriptRoot
 Set-Location $root
 
-Write-Host "Building Slate (wails)…" -ForegroundColor Cyan
+Write-Host "Building Win-Slate (wails)…" -ForegroundColor Cyan
 wails build
 if ($LASTEXITCODE -ne 0) {
     throw "wails build failed with exit code $LASTEXITCODE"
 }
 
-$src = Join-Path $root "build\bin\Slate.exe"
-$dst = Join-Path $root "Slate.exe"
+$src = Join-Path $root "build\bin\Win-Slate.exe"
 if (-not (Test-Path $src)) {
-    throw "Expected binary not found: $src"
+    # transitional name if wails.json not yet applied
+    $alt = Join-Path $root "build\bin\Slate.exe"
+    if (Test-Path $alt) { $src = $alt }
+}
+$dst = Join-Path $root "Win-Slate.exe"
+if (-not (Test-Path $src)) {
+    throw "Expected binary not found under build\bin"
 }
 
-# Keep a single launchable binary at the folder root (no build\bin duplicate).
 Move-Item -Force $src $dst
 Write-Host "OK: $dst" -ForegroundColor Green
-Write-Host "Launch from folder root:  .\Slate.exe" -ForegroundColor Green
+Write-Host "Launch from folder root:  .\Win-Slate.exe" -ForegroundColor Green

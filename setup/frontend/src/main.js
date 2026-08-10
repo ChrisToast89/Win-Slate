@@ -1,4 +1,4 @@
-// Slate for Windows Setup — audit, update check, install to chosen folder.
+// Win-Slate Setup — audit, update check, install. Separate from Sam's npm/Electron package.
 
 const STEPS = ['Home', 'Check PC', 'Install', 'Finish']
 
@@ -66,9 +66,9 @@ function render() {
 
   root.appendChild(
     el('div', { className: 'header' }, [
-      el('h1', { text: '◆  Slate for Windows Setup' }),
+      el('h1', { text: '◆  Win-Slate Setup' }),
       el('p', {
-        text: 'Install or update the Windows build of Slate. Your Documents\\Slate projects are never modified.'
+        text: 'Install Win-Slate — a standalone Windows binary of Slate. Separate from the npm/Electron package. Your Documents\\Slate projects are never modified.'
       }),
       el('p', { className: 'credit' }, [
         'Slate by ',
@@ -79,12 +79,12 @@ function render() {
             go()?.OpenExternal(state.paths.upstreamURL || 'https://github.com/wassermanproductions/slate')
           }
         }, [state.paths.upstreamAuthor || 'Sam Wasserman']),
-        ' (Apache-2.0). This Setup packages a Windows port — not an official Wasserman release. ',
+        ' (Apache-2.0). Win-Slate is an unofficial Windows port — not an official Wasserman release. ',
         el('a', {
           href: '#',
           onClick: (e) => {
             e.preventDefault()
-            go()?.OpenExternal(state.paths.repoURL || 'https://github.com/ChrisToast89/slate-for-windows')
+            go()?.OpenExternal(state.paths.repoURL || 'https://github.com/ChrisToast89/Win-Slate')
           }
         }, ['Repo'])
       ])
@@ -119,14 +119,25 @@ function viewHome() {
     el('p', {
       className: 'muted',
       text: installed
-        ? `Found install: ${state.installStatus.installDir} (${state.installStatus.version || 'version unknown'})`
-        : 'No existing install detected. You can choose where to put Slate for Windows.'
+        ? `Found Win-Slate: ${state.installStatus.installDir} (${state.installStatus.version || 'version unknown'})`
+        : 'No Win-Slate install yet. Default folder: Programs\\Win-Slate (not Programs\\Slate).'
     })
   )
+  if (state.installStatus?.npmSlatePresent) {
+    box.appendChild(
+      el('p', {
+        className: 'muted',
+        text:
+          'Also detected: Sam’s npm/Electron Slate at ' +
+          (state.installStatus.npmSlatePath || 'Programs\\Slate') +
+          '. That is a different program — this Setup will not change it. Both can share Documents\\Slate projects.'
+      })
+    )
+  }
 
   const cards = el('div', { className: 'cards' })
   cards.appendChild(
-    card(installed ? 'Update / reinstall' : 'Install Slate for Windows', 'Check this PC, pick a folder, install the app.', () => {
+    card(installed ? 'Update / reinstall Win-Slate' : 'Install Win-Slate', 'Check this PC, pick a folder, install the standalone app.', () => {
       state.mode = installed ? 'update' : 'install'
       state.view = 'wizard'
       state.step = 1
@@ -301,11 +312,11 @@ function viewAudit() {
 
 function viewInstall() {
   const box = el('div')
-  box.appendChild(el('h2', { text: state.mode === 'update' ? 'Update Slate for Windows' : 'Install Slate for Windows' }))
+  box.appendChild(el('h2', { text: state.mode === 'update' ? 'Update Win-Slate' : 'Install Win-Slate' }))
   box.appendChild(
     el('p', {
       className: 'muted',
-      text: 'Choose the folder for program files. Projects stay in Documents\\Slate and are never overwritten.'
+      text: 'Choose the folder for Win-Slate program files (not Programs\\Slate — that is Sam’s npm/Electron package). Projects stay in Documents\\Slate and are never overwritten.'
     })
   )
 

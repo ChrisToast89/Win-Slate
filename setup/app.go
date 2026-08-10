@@ -73,11 +73,16 @@ func (a *App) RunAudit() audit.Report {
 
 func (a *App) GetInstallStatus() map[string]interface{} {
 	dir, m, ok := manifest.Discover()
+	npm := manifest.DetectNpmSlate()
 	out := map[string]interface{}{
-		"installed": ok,
-		"installDir": dir,
-		"version":    "",
-		"exePath":    "",
+		"installed":       ok,
+		"installDir":      dir,
+		"version":         "",
+		"exePath":         "",
+		"product":         paths.ProductName,
+		"npmSlatePresent": npm.Present,
+		"npmSlatePath":    npm.Path,
+		"npmSlateDetail":  npm.Detail,
 	}
 	if ok {
 		out["exePath"] = paths.InstalledExe(dir)

@@ -7,6 +7,7 @@ node_modules/
 # End-user Setup installer — kept at repo root and tracked in git
 !/Win-Slate-Setup.exe
 !setup/payload/.gitkeep
+setup/payload/Win-Slate.exe
 setup/payload/Slate.exe
 dist/
 distributable/
@@ -16,4 +17,5 @@ tmp/
 .idea/
 .vscode/
 *.syso
+app/Win-Slate.exe
 app/Slate.exe

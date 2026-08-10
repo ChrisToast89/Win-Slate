@@ -41,7 +41,7 @@ Also available as a zip (Setup + portable app + license files):
 
 ### Portable option
 
-The [release zip](https://github.com/ChrisToast89/Win-Slate/releases/download/v0.3.2-win.1/Win-Slate-v0.3.2-win.1.zip) also includes **`Slate.exe`**, which can run without Setup. Setup is still recommended for Start Menu shortcuts and a simple install path.
+The release zip also includes **`Win-Slate.exe`**, which can run without Setup. Setup is still recommended for Start Menu shortcuts and a simple install path.
 
 ### After install (optional — AI features)
 
@@ -59,10 +59,11 @@ You can use much of Slate without a brain; agent-style tools need one of the sup
 
 | | |
 |--|--|
-| **The app** (default) | `%LOCALAPPDATA%\Programs\Win-Slate` |
-| **Your projects** | `%USERPROFILE%\Documents\Slate` |
+| **Win-Slate** (default) | `%LOCALAPPDATA%\Programs\Win-Slate` |
+| **Sam’s npm/Electron Slate** (other app) | `%LOCALAPPDATA%\Programs\Slate` — not managed by this Setup |
+| **Your projects** (shared) | `%USERPROFILE%\Documents\Slate` |
 
-Setup **never deletes or overwrites** your project files under Documents\Slate.
+Setup **never deletes or overwrites** your project files under Documents\Slate. Win-Slate and the npm package are different implementations; both may be installed.
 
 ---
 

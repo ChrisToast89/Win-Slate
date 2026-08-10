@@ -13,11 +13,11 @@ import (
 //go:embed all:frontend/dist
 var assets embed.FS
 
-//go:embed payload/Slate.exe
-var payloadSlate []byte
+//go:embed payload/Win-Slate.exe
+var payloadApp []byte
 
 func main() {
-	app := NewApp(payloadSlate)
+	app := NewApp(payloadApp)
 	err := wails.Run(&options.App{
 		Title:            "Win-Slate Setup",
 		Width:            760,
