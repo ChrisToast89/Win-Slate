@@ -138,6 +138,10 @@ func readConfig() (setupConfig, error) {
 
 func SaveConfig(installDir string) error {
 	_ = os.MkdirAll(paths.ConfigDir(), 0o755)
+	if strings.TrimSpace(installDir) == "" {
+		// Clear last install pointer after uninstall.
+		return os.WriteFile(paths.ConfigPath(), []byte("{}\n"), 0o644)
+	}
 	raw, _ := json.MarshalIndent(setupConfig{InstallDir: installDir}, "", "  ")
 	return os.WriteFile(paths.ConfigPath(), raw, 0o644)
 }

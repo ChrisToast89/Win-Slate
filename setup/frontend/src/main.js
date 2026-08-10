@@ -179,6 +179,13 @@ function viewHome() {
       void runAudit()
     })
   )
+  if (installed) {
+    cards.appendChild(
+      card('Uninstall Win-Slate', 'Remove program files and shortcuts. Your Documents\\Slate projects are kept.', () => {
+        void doUninstall()
+      })
+    )
+  }
   cards.appendChild(
     card('Audit this PC', 'Dependencies, Claude Code, existing install — read-only.', () => {
       state.view = 'audit-only'
@@ -285,6 +292,56 @@ async function runAudit() {
 
 async function runAuditOnly() {
   await runAuditCore()
+}
+
+async function pickFolder() {
+  try {
+    const api = go()
+    if (!api || typeof api.PickInstallFolder !== 'function') {
+      state.error = 'Folder picker is not available in this build.'
+      render()
+      return
+    }
+    const cur = state.installDir || state.paths.defaultInstall || ''
+    const p = await api.PickInstallFolder(cur)
+    if (p && String(p).trim()) {
+      state.installDir = String(p).trim()
+      state.error = null
+      render()
+    }
+  } catch (e) {
+    state.error = 'Could not open folder picker: ' + String(e?.message || e)
+    render()
+  }
+}
+
+async function doUninstall() {
+  const dir = state.installStatus?.installDir || 'the install folder'
+  const ok = window.confirm(
+    'Uninstall Win-Slate from:\n\n' +
+      dir +
+      '\n\nYour projects in Documents\\Slate will NOT be deleted.\n\nContinue?'
+  )
+  if (!ok) return
+  state.busy = true
+  state.busyKind = 'install'
+  state.error = null
+  state.progress = { step: 'Uninstall', detail: 'Removing Win-Slate…', percent: 10 }
+  render()
+  try {
+    const res = await go().Uninstall()
+    state.installStatus = await go().GetInstallStatus()
+    state.result = { result: { summary: res?.summary || 'Uninstalled.' } }
+    state.claudeMsg = ''
+    state.view = 'finish'
+    state.step = 3
+  } catch (e) {
+    state.error = String(e?.message || e)
+    state.view = 'home'
+  }
+  state.busy = false
+  state.busyKind = ''
+  render()
 }
 
 function renderChecks(parent) {
@@ -401,12 +458,10 @@ function viewInstall() {
       className: 'btn',
       text: 'Browse…',
       disabled: state.busy,
-      onClick: async () => {
-        const p = await go().PickInstallFolder(state.installDir)
-        if (p) {
-          state.installDir = p
-          render()
-        }
+      onClick: (e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        void pickFolder()
       }
     })
   )

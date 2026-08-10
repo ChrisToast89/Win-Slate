@@ -1,11 +1,15 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"fmt"
+	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"sync"
+	"time"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 
@@ -121,15 +125,69 @@ func (a *App) PickInstallFolder(current string) string {
 	if current == "" {
 		current = paths.DefaultInstallDir()
 	}
-	path, err := runtime.OpenDirectoryDialog(a.ctx, runtime.OpenDialogOptions{
-		Title:                "Choose install folder for Win-Slate",
-		DefaultDirectory:     current,
-		CanCreateDirectories: true,
-	})
-	if err != nil || path == "" {
+	// Dialogs fail on some systems if DefaultDirectory does not exist yet.
+	start := current
+	if st, err := os.Stat(start); err != nil || !st.IsDir() {
+		start = filepath.Dir(start)
+	}
+	if st, err := os.Stat(start); err != nil || !st.IsDir() {
+		start = paths.LocalAppData()
+	}
+	_ = os.MkdirAll(start, 0o755)
+
+	title := "Choose install folder for Win-Slate"
+	// Prefer native WinForms picker — OpenDirectoryDialog is unreliable in some Wails builds.
+	if p := pickFolderPowerShell(title, start); p != "" {
+		return p
+	}
+	if a.ctx != nil {
+		path, err := runtime.OpenDirectoryDialog(a.ctx, runtime.OpenDialogOptions{
+			Title:                title,
+			DefaultDirectory:     start,
+			CanCreateDirectories: true,
+		})
+		if err != nil {
+			logx.Log("OpenDirectoryDialog error: %v", err)
+			return ""
+		}
+		return path
+	}
+	return ""
+}
+
+// pickFolderPowerShell uses WinForms FolderBrowserDialog when Wails dialog is unavailable.
+func pickFolderPowerShell(title, start string) string {
+	// Escape single quotes for PowerShell single-quoted strings.
+	esc := func(s string) string { return strings.ReplaceAll(s, "'", "''") }
+	ps := fmt.Sprintf(`
+Add-Type -AssemblyName System.Windows.Forms | Out-Null
+$f = New-Object System.Windows.Forms.FolderBrowserDialog
+$f.Description = '%s'
+$f.ShowNewFolderButton = $true
+if (Test-Path -LiteralPath '%s') { $f.SelectedPath = '%s' }
+$r = $f.ShowDialog()
+if ($r -eq [System.Windows.Forms.DialogResult]::OK) { Write-Output $f.SelectedPath }
+`, esc(title), esc(start), esc(start))
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
+	defer cancel()
+	cmd := exec.CommandContext(ctx, "powershell", "-NoProfile", "-STA", "-ExecutionPolicy", "Bypass", "-Command", ps)
+	var out, errb bytes.Buffer
+	cmd.Stdout = &out
+	cmd.Stderr = &errb
+	if err := cmd.Run(); err != nil {
+		logx.Log("FolderBrowserDialog failed: %v %s", err, errb.String())
 		return ""
 	}
-	return path
+	p := strings.TrimSpace(out.String())
+	// PowerShell may emit trailing newlines only
+	if p == "" {
+		return ""
+	}
+	// First line only
+	if i := strings.IndexAny(p, "\r\n"); i >= 0 {
+		p = p[:i]
+	}
+	return strings.TrimSpace(p)
 }
 
 // StartInstall installs or updates into installDir using the embedded app binary.
@@ -227,12 +285,43 @@ func (a *App) LaunchClaudeLogin() (string, error) {
 func (a *App) LaunchApp() error {
 	dir, _, ok := manifest.Discover()
 	if !ok {
-		return fmt.Errorf("Slate is not installed")
+		return fmt.Errorf("Win-Slate is not installed")
 	}
 	exe := paths.InstalledExe(dir)
 	cmd := exec.Command(exe)
 	cmd.Dir = filepath.Dir(exe)
 	return cmd.Start()
+}
+
+// Uninstall removes a verified Win-Slate install only (never Documents\Slate projects).
+func (a *App) Uninstall() (map[string]interface{}, error) {
+	a.mu.Lock()
+	if a.running {
+		a.mu.Unlock()
+		return nil, fmt.Errorf("another operation is already running")
+	}
+	a.running = true
+	a.mu.Unlock()
+	defer func() {
+		a.mu.Lock()
+		a.running = false
+		a.mu.Unlock()
+	}()
+
+	res, err := install.Uninstall(func(step, detail string, percent int) {
+		logx.Log("uninstall [%d%%] %s — %s", percent, step, detail)
+		a.emitProgress(step, detail, percent)
+	})
+	if err != nil {
+		return nil, err
+	}
+	return map[string]interface{}{
+		"ok":                res.OK,
+		"removedDir":        res.RemovedDir,
+		"projectsDir":       res.ProjectsDir,
+		"projectsPreserved": res.ProjectsPreserved,
+		"summary":           res.Summary,
+	}, nil
 }
 
 func (a *App) OpenExternal(url string) {
