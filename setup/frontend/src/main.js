@@ -61,7 +61,19 @@ async function bootstrap() {
       detail: p.detail || state.progress.detail || '',
       percent: typeof p.percent === 'number' ? p.percent : state.progress.percent || 0
     }
-    // Throttle full re-renders slightly by always rendering (audit is short)
+    // Update busy widgets in place — full re-render during await can stall WebView updates.
+    const stepEl = document.getElementById('busy-step')
+    const detailEl = document.getElementById('busy-detail')
+    const barEl = document.getElementById('busy-bar')
+    const pctEl = document.getElementById('busy-pct')
+    if (stepEl && detailEl && barEl && pctEl) {
+      stepEl.textContent = state.progress.step || 'Working'
+      detailEl.textContent = state.progress.detail || 'Please wait…'
+      const pct = Math.max(0, Math.min(100, state.progress.percent || 0))
+      barEl.style.width = pct + '%'
+      pctEl.textContent = pct + '%'
+      return
+    }
     render()
   }
   eventsOn('install:progress', onProgress)
@@ -73,23 +85,23 @@ function busyPanel(title) {
   const pct = Math.max(0, Math.min(100, state.progress.percent || 0))
   const step = state.progress.step || 'Working'
   const detail = state.progress.detail || 'Please wait…'
-  const wrap = el('div', { className: 'busy-panel' })
+  const wrap = el('div', { className: 'busy-panel', id: 'busy-panel' })
   wrap.appendChild(el('div', { className: 'busy-title', text: title || 'Checking this PC…' }))
   const row = el('div', { className: 'busy-row' })
   row.appendChild(el('div', { className: 'spinner' }))
   row.appendChild(
     el('div', { className: 'busy-text' }, [
-      el('div', { className: 'busy-step', text: step }),
-      el('div', { className: 'busy-detail', text: detail })
+      el('div', { className: 'busy-step', id: 'busy-step', text: step }),
+      el('div', { className: 'busy-detail', id: 'busy-detail', text: detail })
     ])
   )
   wrap.appendChild(row)
   const bar = el('div', { className: 'progress' })
-  const fill = el('div', { className: 'progress-bar' })
+  const fill = el('div', { className: 'progress-bar', id: 'busy-bar' })
   fill.style.width = pct + '%'
   bar.appendChild(fill)
   wrap.appendChild(bar)
-  wrap.appendChild(el('div', { className: 'progress-meta', text: pct + '%' }))
+  wrap.appendChild(el('div', { className: 'progress-meta', id: 'busy-pct', text: pct + '%' }))
   return wrap
 }
 
@@ -228,43 +240,63 @@ function card(title, body, onClick) {
   return el('div', { className: 'card', onClick }, [el('h3', { text: title }), el('p', { text: body })])
 }
 
-async function runAudit() {
+async function runAuditCore() {
   state.busy = true
   state.busyKind = 'audit'
   state.error = null
-  state.progress = { step: 'Starting', detail: 'Preparing system checks…', percent: 1 }
+  state.progress = { step: 'Starting', detail: 'Starting system checks…', percent: 1 }
   render()
+
+  // Client-side watchdog so the UI never sits silent forever if Go blocks.
+  let tick = 1
+  const watchdog = setInterval(() => {
+    if (!state.busy || state.busyKind !== 'audit') return
+    tick += 1
+    if (tick > 45) {
+      // 45s hard ceiling message; Go side should have timed out earlier
+      const detailEl = document.getElementById('busy-detail')
+      if (detailEl) {
+        detailEl.textContent =
+          'Still working… if this never finishes, close Setup and check %TEMP%\\win-slate-setup.log'
+      }
+    }
+  }, 1000)
+
   try {
+    // Yield a frame so the busy panel paints before the Go call.
+    await new Promise((r) => requestAnimationFrame(() => r()))
     state.audit = await go().RunAudit()
-    state.progress = { step: 'Updates', detail: 'Checking for updates on GitHub…', percent: 96 }
-    render()
-    state.updates = await go().CheckForUpdates()
+    state.progress = { step: 'Updates', detail: 'Optional GitHub update check…', percent: 96 }
+    const stepEl = document.getElementById('busy-step')
+    const detailEl = document.getElementById('busy-detail')
+    const barEl = document.getElementById('busy-bar')
+    const pctEl = document.getElementById('busy-pct')
+    if (stepEl) stepEl.textContent = state.progress.step
+    if (detailEl) detailEl.textContent = state.progress.detail
+    if (barEl) barEl.style.width = '96%'
+    if (pctEl) pctEl.textContent = '96%'
+    try {
+      state.updates = await go().CheckForUpdates()
+    } catch (ue) {
+      state.updates = { message: 'Update check skipped — install still works offline.', ok: false }
+    }
     if (state.audit?.installPath) state.installDir = state.audit.installPath
   } catch (e) {
     state.error = String(e?.message || e)
+  } finally {
+    clearInterval(watchdog)
+    state.busy = false
+    state.busyKind = ''
+    render()
   }
-  state.busy = false
-  state.busyKind = ''
-  render()
+}
+
+async function runAudit() {
+  await runAuditCore()
 }
 
 async function runAuditOnly() {
-  state.busy = true
-  state.busyKind = 'audit'
-  state.error = null
-  state.progress = { step: 'Starting', detail: 'Preparing system checks…', percent: 1 }
-  render()
-  try {
-    state.audit = await go().RunAudit()
-    state.progress = { step: 'Updates', detail: 'Checking for updates on GitHub…', percent: 96 }
-    render()
-    state.updates = await go().CheckForUpdates()
-  } catch (e) {
-    state.error = String(e?.message || e)
-  }
-  state.busy = false
-  state.busyKind = ''
-  render()
+  await runAuditCore()
 }
 
 function renderChecks(parent) {

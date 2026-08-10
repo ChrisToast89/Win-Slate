@@ -212,11 +212,26 @@ func resolveClaude() string {
 }
 
 func which(name string) string {
-	p, err := exec.LookPath(name)
-	if err != nil {
+	// LookPath can hang on broken/network PATH entries — hard-cap wait.
+	type result struct {
+		path string
+	}
+	ch := make(chan result, 1)
+	go func() {
+		p, err := exec.LookPath(name)
+		if err != nil {
+			ch <- result{path: ""}
+			return
+		}
+		ch <- result{path: p}
+	}()
+	select {
+	case r := <-ch:
+		return r.path
+	case <-time.After(2 * time.Second):
+		logx.Log("which(%s) timed out after 2s", name)
 		return ""
 	}
-	return p
 }
 
 // runTimed runs a short CLI probe with a hard deadline (avoids hung node/winget aliases).

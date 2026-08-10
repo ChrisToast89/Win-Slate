@@ -44,9 +44,11 @@ func (a *App) emitProgress(step, detail string, percent int) {
 	payload := map[string]interface{}{
 		"step": step, "detail": detail, "percent": percent,
 	}
-	// Same payload for install and audit UI (busy indicator).
-	runtime.EventsEmit(a.ctx, "install:progress", payload)
-	runtime.EventsEmit(a.ctx, "audit:progress", payload)
+	// Emit async so a bound method (RunAudit) cannot deadlock waiting on the UI.
+	go func() {
+		runtime.EventsEmit(a.ctx, "install:progress", payload)
+		runtime.EventsEmit(a.ctx, "audit:progress", payload)
+	}()
 }
 
 // GetPaths exposes constants and default destinations for the UI.
@@ -71,9 +73,12 @@ func (a *App) GetPaths() map[string]string {
 }
 
 func (a *App) RunAudit() audit.Report {
+	// Emit immediately so the UI leaves "Preparing…" even before first check.
+	a.emitProgress("Starting", "Running system checks…", 2)
 	return audit.Run(func(step, detail string, percent int) {
-		logx.Log("audit [%d%%] %s — %s", percent, step, detail)
+		// Progress first (non-blocking), log second — never block UI on log I/O.
 		a.emitProgress(step, detail, percent)
+		logx.Log("audit [%d%%] %s — %s", percent, step, detail)
 	})
 }
 
@@ -104,12 +109,13 @@ func (a *App) GetInstallStatus() map[string]interface{} {
 }
 
 func (a *App) CheckForUpdates() update.CheckResult {
-	a.emitProgress("Updates", "Checking GitHub for a newer Win-Slate release (max ~5s)…", 96)
+	// Best-effort only; never required for install. Keep timeout short inside update.Check.
+	a.emitProgress("Updates", "Optional: checking GitHub (max ~5s)…", 96)
 	res := update.Check()
 	if res.OK {
 		a.emitProgress("Updates", res.Message, 100)
 	} else {
-		a.emitProgress("Updates", "Update check skipped or failed — offline install still works.", 100)
+		a.emitProgress("Updates", "Update check skipped — you can still install offline.", 100)
 	}
 	return res
 }
