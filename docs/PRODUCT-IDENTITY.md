@@ -10,9 +10,9 @@
    - Installs **upstream Electron Slate** via Node/npm tooling.  
    - Output app: Programs **Slate**.  
 
-2. **Legacy folder `Slate-win/slate-windows`**  
-   - Early Wails port (`Slate.exe` at tree root).  
-   - Same *category* as Win-Slate, but **not** the published product. Prefer **this** repo (`Win-Slate/`) for all new port work.
+2. **Archived early port** (`_archive/early-wails-port-NOT-ACTIVE/`)  
+   - Former path: `Slate-win/slate-windows/`.  
+   - Early Wails experiment only — **not** the published product. All new port work is **this** repo (`Win-Slate/`).
 
 ## User-facing names
 

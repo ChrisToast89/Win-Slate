@@ -2,7 +2,7 @@
 
 **Product:** **Win-Slate** — self-contained Go+Wails port (this tree under `Win-Slate/app`).  
 **Not** the Electron installer (`slate-installer` / slate-windows-setup).  
-**Not** the legacy folder `Slate-win/slate-windows` (early port; superseded).  
+**Not** the archived early port (`_archive/early-wails-port-NOT-ACTIVE/`).  
 Identity: [../../AGENTS.md](../../AGENTS.md) · [../../docs/PRODUCT-IDENTITY.md](../../docs/PRODUCT-IDENTITY.md)
 
 **Session goal (historical):** Full-fidelity Windows binary (Go + Wails) of Slate 0.3.2 without modifying `slate-0.3.2/`.

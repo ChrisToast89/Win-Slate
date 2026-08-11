@@ -11,7 +11,7 @@ This folder is the **Wails application** for **Win-Slate**: the self-contained W
 Do not confuse this tree with:
 
 - **`slate-installer`** — Setup that installs **original Electron/npm Slate**  
-- **`Slate-win/slate-windows`** — legacy early port (superseded by this product)
+- **`_archive/early-wails-port-NOT-ACTIVE`** — early port (archived; superseded by this product)
 
 ## Build (binary must land in this folder’s root)
 

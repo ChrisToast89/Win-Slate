@@ -1,25 +1,23 @@
 # Copy the current app binary into setup\payload\Win-Slate.exe for Setup embed.
-# Preference: sibling slate-windows\Win-Slate.exe → app\Win-Slate.exe → legacy Slate.exe names
+# Sources: app\Win-Slate.exe, then app\Slate.exe alias only (no archived port trees).
 $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $PSScriptRoot
 $payloadDir = Join-Path $root "setup\payload"
 $payloadExe = Join-Path $payloadDir "Win-Slate.exe"
 $cands = @(
-    (Join-Path (Split-Path -Parent $root) "slate-windows\Win-Slate.exe"),
     (Join-Path $root "app\Win-Slate.exe"),
-    (Join-Path (Split-Path -Parent $root) "slate-windows\Slate.exe"),
     (Join-Path $root "app\Slate.exe")
 )
 
 $src = $null
 foreach ($cand in $cands) {
-    if (Test-Path $cand) {
-        $src = (Resolve-Path $cand).Path
+    if (Test-Path -LiteralPath $cand) {
+        $src = (Resolve-Path -LiteralPath $cand).Path
         break
     }
 }
 if (-not $src) {
-    throw "No app binary found. Build app with .\scripts\build.ps1 first."
+    throw "No app binary found. Build app with app\scripts\build.ps1 first."
 }
 
 New-Item -ItemType Directory -Force -Path $payloadDir | Out-Null

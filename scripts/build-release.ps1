@@ -1,5 +1,5 @@
 # Build Win-Slate app + Setup installer, stage distributable package.
-# App binary: folder root only (app\Win-Slate.exe or sibling slate-windows\Win-Slate.exe).
+# App binary: app\Win-Slate.exe (or app\Slate.exe alias) only — no sibling port trees.
 # Requires: Go, Wails, Node/npm
 $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $PSScriptRoot
@@ -12,14 +12,13 @@ $stage = Join-Path $dist "Win-Slate-v$version"
 $payloadDir = Join-Path $root "setup\payload"
 $payloadExe = Join-Path $payloadDir "Win-Slate.exe"
 $appRootExe = Join-Path $root "app\Win-Slate.exe"
-$siblingExe = Join-Path (Split-Path -Parent $root) "slate-windows\Win-Slate.exe"
-$siblingLegacy = Join-Path (Split-Path -Parent $root) "slate-windows\Slate.exe"
+$appAliasExe = Join-Path $root "app\Slate.exe"
 
 New-Item -ItemType Directory -Force -Path $dist, $stage, $payloadDir | Out-Null
 
 function Resolve-AppBinary {
-    # Prefer monorepo app build; sibling trees are fallback only.
-    foreach ($cand in @($appRootExe, $siblingExe, (Join-Path $root "app\Slate.exe"), $siblingLegacy)) {
+    # Only this product's app/ root — archived early port is not a source.
+    foreach ($cand in @($appRootExe, $appAliasExe)) {
         if (Test-Path -LiteralPath $cand) {
             Write-Host "Using app binary: $cand" -ForegroundColor Cyan
             return (Resolve-Path -LiteralPath $cand).Path
