@@ -385,9 +385,14 @@ label {
 }
 
 /* ---------- Tabs → segmented control ---------- */
+/* Labels stay fully readable (no clip, no horizontal scrollbar).
+   When the rail is narrow, tabs wrap onto a second row instead of
+   shrinking under the text or requiring middle-mouse pan. */
 
 .tabs {
   display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
   gap: 2px;
   margin: 8px 8px 0;
   padding: 3px;
@@ -395,23 +400,21 @@ label {
   background: rgba(0, 0, 0, 0.28);
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
   flex-shrink: 0;
-  overflow-x: auto;
-  scrollbar-width: none;
+  overflow: visible;
   border-bottom: none;
 }
 
-.tabs::-webkit-scrollbar {
-  display: none;
-}
-
 .tab {
-  flex: 1;
-  padding: 5px 10px;
+  /* Grow to fill the row; never shrink below the full label width. */
+  flex: 1 1 auto;
+  min-width: max-content;
+  padding: 5px 8px;
   font-size: 11.5px;
   font-weight: 550;
   color: var(--ink-2);
   border-radius: 6.5px;
   white-space: nowrap;
+  text-align: center;
   transition: all 0.16s var(--ease);
 }
 

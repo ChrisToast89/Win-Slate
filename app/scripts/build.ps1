@@ -21,10 +21,15 @@ if (-not (Test-Path $src)) {
     if (Test-Path $alt) { $src = $alt }
 }
 $dst = Join-Path $root "Win-Slate.exe"
+$legacyDst = Join-Path $root "Slate.exe"
 if (-not (Test-Path $src)) {
     throw "Expected binary not found under build\bin"
 }
 
+# Primary product name at app folder root (alongside any legacy Slate.exe).
 Move-Item -Force $src $dst
+# Keep Slate.exe in the same root for existing shortcuts / muscle memory.
+Copy-Item -Force $dst $legacyDst
 Write-Host "OK: $dst" -ForegroundColor Green
-Write-Host "Launch from folder root:  .\Win-Slate.exe" -ForegroundColor Green
+Write-Host "    $legacyDst (same binary)" -ForegroundColor Green
+Write-Host "Launch from folder root:  .\Win-Slate.exe  or  .\Slate.exe" -ForegroundColor Green

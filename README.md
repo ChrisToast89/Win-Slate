@@ -2,6 +2,11 @@
 
 **Version 1.0.0**
 
+> **Product identity (maintainers / agents)**  
+> This repo is the **ported Windows app** (Go + Wails), **not** the installer for Sam’s Electron/npm Slate.  
+> Electron installer → workspace `slate-installer` / GitHub `slate-windows-setup`.  
+> See [AGENTS.md](./AGENTS.md) and [docs/PRODUCT-IDENTITY.md](./docs/PRODUCT-IDENTITY.md).
+
 Windows version of **[Slate](https://github.com/wassermanproductions/slate)** — the prompt studio for AI filmmaking — created by **[Sam Wasserman](https://wassermanproductions.com)**.
 
 <img width="320" alt="image" src="https://github.com/user-attachments/assets/1e88f42c-9285-4b79-9836-9406424b508a" />
