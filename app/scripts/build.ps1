@@ -8,7 +8,8 @@ $root = Split-Path -Parent $PSScriptRoot
 Set-Location $root
 
 Write-Host "Building Win-Slate (wails)…" -ForegroundColor Cyan
-wails build
+# Keep wails on the host stream so callers that assign script output don't get pollution.
+wails build *>&1 | ForEach-Object { Write-Host $_ }
 if ($LASTEXITCODE -ne 0) {
     throw "wails build failed with exit code $LASTEXITCODE"
 }

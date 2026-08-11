@@ -20,9 +20,9 @@ New-Item -ItemType Directory -Force -Path $dist, $stage, $payloadDir | Out-Null
 function Resolve-AppBinary {
     # Prefer monorepo app build; sibling trees are fallback only.
     foreach ($cand in @($appRootExe, $siblingExe, (Join-Path $root "app\Slate.exe"), $siblingLegacy)) {
-        if (Test-Path $cand) {
+        if (Test-Path -LiteralPath $cand) {
             Write-Host "Using app binary: $cand" -ForegroundColor Cyan
-            return (Resolve-Path $cand).Path
+            return (Resolve-Path -LiteralPath $cand).Path
         }
     }
     Write-Host "==> Building app (root Win-Slate.exe only)…" -ForegroundColor Cyan
@@ -30,37 +30,48 @@ function Resolve-AppBinary {
     $buildPs1 = Join-Path $appDir "scripts\build.ps1"
     Push-Location $appDir
     try {
-        if (Test-Path $buildPs1) {
-            & $buildPs1
+        if (Test-Path -LiteralPath $buildPs1) {
+            # External tools (wails) write to the success stream. If that output
+            # is not consumed, it becomes part of this function's return value and
+            # $appExe can end up empty/array — breaking Copy-Item on CI.
+            & $buildPs1 *>&1 | ForEach-Object { Write-Host $_ }
             if ($LASTEXITCODE -ne 0 -and $null -ne $LASTEXITCODE) { throw "app build.ps1 failed" }
         } else {
-            wails build
+            wails build *>&1 | ForEach-Object { Write-Host $_ }
             if ($LASTEXITCODE -ne 0) { throw "app wails build failed" }
             $wailsOut = Join-Path $appDir "build\bin\Win-Slate.exe"
-            if (-not (Test-Path $wailsOut)) {
+            if (-not (Test-Path -LiteralPath $wailsOut)) {
                 $wailsOut = Join-Path $appDir "build\bin\Slate.exe"
             }
-            if (-not (Test-Path $wailsOut)) { throw "missing wails output binary" }
+            if (-not (Test-Path -LiteralPath $wailsOut)) { throw "missing wails output binary" }
             Move-Item -Force $wailsOut $appRootExe
         }
     } finally {
         Pop-Location
     }
-    if (-not (Test-Path $appRootExe)) {
+    if (-not (Test-Path -LiteralPath $appRootExe)) {
         throw "App binary missing after build: $appRootExe"
     }
-    return (Resolve-Path $appRootExe).Path
+    return (Resolve-Path -LiteralPath $appRootExe).Path
 }
 
 $appExe = Resolve-AppBinary
-Copy-Item -Force $appExe $payloadExe
-Copy-Item -Force $appExe $appRootExe -ErrorAction SilentlyContinue
-Copy-Item -Force $appExe (Join-Path $stage "Win-Slate.exe")
+# Defensive: if multiple pipeline objects leaked, keep the last path-like string.
+if ($appExe -is [array]) {
+    $appExe = @($appExe | Where-Object { $_ -is [string] -and $_ -and (Test-Path -LiteralPath $_) })[-1]
+}
+if (-not $appExe -or -not (Test-Path -LiteralPath $appExe)) {
+    throw "Resolve-AppBinary returned empty or missing path: '$appExe' (expected $appRootExe)"
+}
+Write-Host "App binary resolved: $appExe" -ForegroundColor Cyan
+Copy-Item -Force -LiteralPath $appExe -Destination $payloadExe
+Copy-Item -Force -LiteralPath $appExe -Destination $appRootExe -ErrorAction SilentlyContinue
+Copy-Item -Force -LiteralPath $appExe -Destination (Join-Path $stage "Win-Slate.exe")
 Write-Host "Payload ready: $payloadExe" -ForegroundColor Green
 
 Write-Host "==> Building Setup (embeds setup\payload\Win-Slate.exe)…" -ForegroundColor Cyan
 Set-Location (Join-Path $root "setup")
-wails build
+wails build *>&1 | ForEach-Object { Write-Host $_ }
 if ($LASTEXITCODE -ne 0) { throw "setup wails build failed" }
 
 $setupWailsOut = Join-Path $root "setup\build\bin\Win-Slate-Setup.exe"
