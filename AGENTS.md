@@ -16,12 +16,11 @@ This is an **unofficial derivative**. Credit Sam Wasserman; do not present as of
 
 | Not this | That lives at |
 |----------|----------------|
-| Installer for Sam’s **Electron/npm** Slate | Workspace `slate-installer/` · GitHub `ChrisToast89/slate-windows-setup` |
-| Early Wails port (archived) | Workspace `_archive/early-wails-port-NOT-ACTIVE/` (was `Slate-win/slate-windows/`) |
-| Upstream Electron source | Workspace `slate/` or `slate-0.3.2/` |
+| Installer for Sam’s **Electron/npm** Slate | Separate product: GitHub `ChrisToast89/slate-windows-setup` (local tree often `slate-installer/`) |
+| Early Wails port experiment | **Not in this repo.** Archived outside the git root if present locally as `_archive/early-wails-port-NOT-ACTIVE/` |
+| Upstream Electron source | https://github.com/wassermanproductions/slate |
 
-See workspace root `PRODUCT-MAP.md` and `../README.md` (parent `Slate-win/`).  
-Pointer: `../MOVED-slate-windows.md`.
+Identity details: [docs/PRODUCT-IDENTITY.md](./docs/PRODUCT-IDENTITY.md).
 
 ## Layout
 

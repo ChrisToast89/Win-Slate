@@ -14,8 +14,8 @@ import (
 
 func main() {
 	if len(os.Args) < 3 {
-		fmt.Println("usage: qainstall <installDir> <Slate.exe>")
-		fmt.Println("  payload path is normally setup/payload/Slate.exe (synced from app root or ../slate-windows/Slate.exe)")
+		fmt.Println("usage: qainstall <installDir> <Win-Slate.exe>")
+		fmt.Println("  payload path is normally setup/payload/Win-Slate.exe (from app\\scripts\\build.ps1 + scripts\\sync-payload.ps1)")
 		os.Exit(2)
 	}
 	dest := os.Args[1]
@@ -60,7 +60,7 @@ func main() {
 		panic(err)
 	}
 	fmt.Printf("manifest version=%s exe=%s smoke=%v\n", m.AppVersion, m.ExePath, m.SmokeOK)
-	if _, err := os.Stat(filepath.Join(dest, "Slate.exe")); err != nil {
+	if _, err := os.Stat(filepath.Join(dest, "Win-Slate.exe")); err != nil {
 		fmt.Println("missing exe")
 		os.Exit(1)
 	}

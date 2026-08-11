@@ -121,6 +121,8 @@ You can ignore the details and just click through; this is only for the curious:
 - Installer distributed as **`Win-Slate-Setup.zip`** for fewer SmartScreen issues  
 - Full credit to Sam Wasserman / upstream Slate (Apache-2.0)  
 
+Maintainer notes since the tag (Studios tab layout, CI release build, identity docs): see [docs/CHANGELOG.md](./docs/CHANGELOG.md).  
+
 ---
 
 ## Credit

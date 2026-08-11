@@ -28,3 +28,5 @@ export function PickInstallFolder(arg1:string):Promise<string>;
 export function RunAudit():Promise<audit.Report>;
 
 export function StartInstall(arg1:string,arg2:boolean,arg3:boolean):Promise<Record<string, any>>;
+
+export function Uninstall():Promise<Record<string, any>>;

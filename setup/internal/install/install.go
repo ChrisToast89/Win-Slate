@@ -35,7 +35,7 @@ type Options struct {
 	DesktopShortcut bool
 	IsUpdate        bool
 	ReleaseTag      string
-	Payload         []byte // embedded Slate.exe
+	Payload         []byte // embedded Win-Slate.exe
 }
 
 func Run(opts Options, progress ProgressFn) (Result, error) {

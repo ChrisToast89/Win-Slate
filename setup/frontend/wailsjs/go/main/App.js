@@ -53,3 +53,7 @@ export function RunAudit() {
 export function StartInstall(arg1, arg2, arg3) {
   return window['go']['main']['App']['StartInstall'](arg1, arg2, arg3);
 }
+
+export function Uninstall() {
+  return window['go']['main']['App']['Uninstall']();
+}
